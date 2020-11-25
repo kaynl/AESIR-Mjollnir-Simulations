@@ -49,7 +49,7 @@ disp("-----------------------")
 disp("Solving Differential Eq") 
 disp("-----------------------")
 disp(" ")
-[t,state] = ode45(@Tank_equations,t_range,Initial_conditions);%state1=m_tank_total, state2=U_tank_total,state3=T_tank_wall
+[t,state] = ode45(@System_equations,t_range,Initial_conditions);%state1=m_tank_total, state2=U_tank_total,state3=T_tank_wall
 
 m_ox_total = state(:,1);                          %total mass in the tank according to time
 
@@ -103,7 +103,7 @@ disp(" ")
 
 
 for i=1:length(T_tank)
-    [dstatedt] = Tank_equations(t(i), state(i,:)');
+    [dstatedt] = System_equations(t(i), state(i,:)');
     ax(i) = dstatedt(8);
     ay(i) = dstatedt(9);
     
