@@ -14,7 +14,7 @@ g=opts.g;%m/s2
 cp_liq=py.CoolProp.CoolProp.PropsSI('C','P',P_tank,'Q',0,'NitrousOxide');%calorific capacity of N2O
 rho_liq=py.CoolProp.CoolProp.PropsSI('D','P',P_tank,'Q',0,'NitrousOxide');%density of rho
 Beta_liq=py.CoolProp.CoolProp.PropsSI('isobaric_expansion_coefficient','P',P_tank,'Q',0,'NitrousOxide');%isobaric coefficient of N2O
-kappa_liq=103;%thermal capacity of N2O  : Wm-1K-1
+kappa_liq=100.1e-3;%thermal capacity of N2O  : Wm-1K-1
 L=D_int;%characteristic lenght : m
 visc_liq=2.29e-5;%viscosity of N2O
 
@@ -22,7 +22,7 @@ visc_liq=2.29e-5;%viscosity of N2O
 cp_gaz=py.CoolProp.CoolProp.PropsSI('C','P',P_tank,'Q', 1,'NitrousOxide');%calorific capacity of N2O
 rho_gaz=py.CoolProp.CoolProp.PropsSI('D','P',P_tank,'Q', 1,'NitrousOxide');%density of rho
 Beta_gaz=py.CoolProp.CoolProp.PropsSI('isobaric_expansion_coefficient','P',P_tank,'Q', 1,'NitrousOxide');%isobaric coefficient of N2O
-kappa_gaz=10;%thermal conductivity of N2O gaz : Wm-1K-1
+kappa_gaz=20.6e-3;%thermal conductivity of N2O gaz : Wm-1K-1
 L=D_int;%characteristic lenght : m
 visc_gaz=2.29e-5;%viscosity of N2O
 

@@ -158,8 +158,3 @@ opts.Rho_Psat_NO2_polynom=polyfit(NO2_Psat_set,NO2_Rho_set,3);    %interpolation
 opts.OF_set = C_star.OF;                                             %OF ratio range
 opts.C_star_set = C_star.CStarms;                                    %characteristic velocity C_Star
 % opts.C_Star_polynom=polyfit(OF_set,C_star_set,5);               %interpolation degree 3
-
-%% test
-
-opts.acceleration_x=[];
-opts.acceleration_y=[];
