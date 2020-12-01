@@ -1,9 +1,8 @@
-run('./setup')
+run('./../setup')
 
 global opts
 
 %Combustion parameters
-
 
 
 dt = 0.001;

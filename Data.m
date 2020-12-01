@@ -8,6 +8,17 @@ opts.launch_angle = 85;          %Self explanatory (in °)
 
 opts.drag_coefficient = 0.5;     
 opts.combustion_efficiency = 0.9;
+opts.T_ext = 293;               %Exterior temperature (20°C)
+
+%% Physical Constants
+
+opts.g=9.81;                   %Gravitational Constant (m.s-2)
+opts.R = 8.314;                %Universal Gas Constant (J⋅K−1⋅mol−1) 
+
+opts.P_atm_sl = 101325;           %Atmospheric Pressure (N/m2)
+opts.stephan_cst = 5.67e-8;    %Stephan-Boltzman Constant (W/m2/K4)
+opts.eber_parameter = 0.89;    %Eber Parameter for vertex angle between 20-50 degrees
+
 
 %% Requirements
 
@@ -41,8 +52,8 @@ opts.L_kastrullen = 35e-2;  %length of Kastrullen
 %% Injector Geometry
 
 opts.n_inj=38;                 %Number of injectors
-opts.r_inj=1.5e-3/2;             %injector radius (m)
-opts.Cd = 0.83;                %Discharge coefficient ()
+opts.r_inj=1.5e-3/2;           %injector radius (m)
+opts.Cd = 0.83;                %Discharge coefficient
 
 %% Combustion Chamber Geometry
 
@@ -52,6 +63,10 @@ opts.L_pcc = 103.9e-3;                      %Pre-combustion chamber length
 opts.L_cc = 50e-2;                          %Combustion Chamber Total length(m)
 opts.T_cc = 3500;                           %Combustion Chamber temperature (K)
 
+%% Ox Properties
+
+opts.Molecular_weight_ox = 44.013e-3;  %molecular weight N2O (kg/mol)
+% opts.r_ox = opts.R/opts.Molecular_weight_ox;
 
 %% Fuel Properties
 
@@ -105,13 +120,6 @@ opts.rho_alu = 2700;                        %Density Aluminium (kg/m^3)
 opts.alu_thermal_capacity = 897;            %J/K/kg
 opts.aluminium_emissivity = 0.8;            %Emissivity of painted tank
 
-%% Physical Constants
-
-opts.g=9.81;                   %Gravitational Constant (m.s-2)
-opts.R = 8.314;                %Universal Gas Constant (J⋅K−1⋅mol−1)    
-opts.P_atm_sl = 101325;        %Atmospheric Pressure (N/m2)
-opts.stephan_cst = 5.67e-8;    %Stephan-Boltzman Constant (W/m2/K4)
-opts.eber_parameter = 0.89;    %Eber Parameter for vertex angle between 20-50 degrees
 
 %% Setup the Import Options
 import_options_N2O = delimitedTextImportOptions("NumVariables", 4);
@@ -158,3 +166,16 @@ opts.Rho_Psat_NO2_polynom=polyfit(NO2_Psat_set,NO2_Rho_set,3);    %interpolation
 opts.OF_set = C_star.OF;                                             %OF ratio range
 opts.C_star_set = C_star.CStarms;                                    %characteristic velocity C_Star
 % opts.C_Star_polynom=polyfit(OF_set,C_star_set,5);               %interpolation degree 3
+
+
+%% Filling Properties
+
+opts.d_filling_inlet = 8e-3;
+opts.d_filling_outlet = 0.7e-3;
+
+opts.S_inlet = pi*(opts.d_filling_inlet/2)^2;
+opts.S_outlet = pi*(opts.d_filling_outlet/2)^2;
+
+opts.P_storage_tank = polyval(opts.Psat_NO2_polynom,opts.T_ext)*10^5;
+opts.cd_inlet = 0.75;
+opts.r_ox = 180.7175;%polyval(opts.Psat_NO2_polynom,opts.T_ext)*10^5 / py.CoolProp.CoolProp.PropsSI('D','T',opts.T_ext,'Q', 1,'NitrousOxide') / opts.T_ext;
