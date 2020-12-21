@@ -33,7 +33,7 @@ n=2/5;%constant parameters given in Zimmerman;
 Ra=cp_liq*rho_liq^2*g*Beta_liq*abs(DeltaT)*L^3/(visc_liq*kappa_liq);%Rayleigh number
 Nu=c*Ra^n;%Nusset number for liquid phase
 h=Nu*kappa_liq/L;%Convection capacity for liquid phase
-Q_dot_in_liquid=h*A*DeltaT;%Final heat flux in
+Q_dot_in_liquid=h*A_liq*DeltaT;%Final heat flux in
 
 %gaz phase:
 A_gaz=A*x;%area in contact with gaz phase
@@ -42,7 +42,7 @@ n=2/5;%constant parameters given in Zimmerman;
 Ra=cp_gaz*rho_gaz^2*g*Beta_gaz*abs(DeltaT)*L^3/(visc_gaz*kappa_gaz);%Rayleigh number
 Nu=c*Ra^n;%Nusset number for liquid phase
 h=Nu*kappa_gaz/L;%Convection capacity for liquid phase
-Q_dot_in_gaz=h*A*DeltaT;%Final heat flux in
+Q_dot_in_gaz=h*A_gaz*DeltaT;%Final heat flux in
 
 Qdot_w_t=Q_dot_in_gaz+Q_dot_in_liquid;
 end

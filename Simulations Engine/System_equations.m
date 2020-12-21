@@ -25,8 +25,8 @@ flight_state = opts.flight_state;       %0 for static test and 1 for in flight t
 a = opts.reg_a;
 n = opts.reg_n;
 
-D_tank_ext = opts.D_tank_ext;
-D_tank_int = opts.D_tank_int;
+D_tank_ext = opts.D_ext_tank;
+D_tank_int = opts.D_int_tank;
 L_tank = opts.L_tank;
 m_wall = opts.rho_alu*pi*(D_tank_ext^2-D_tank_int^2)/4*L_tank;
 c_wall = opts.alu_thermal_capacity; 

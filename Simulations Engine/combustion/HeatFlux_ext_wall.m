@@ -3,7 +3,7 @@ function Qdot_ext_w = HeatFlux_ext_wall(V_rocket,T_ext,P_ext,T_wall, flight_stat
 
 
 %Geometric parameters:
-D_ext = opts.D_tank_ext;
+D_ext = opts.D_ext_tank;
 L = opts.L_tank;
 S = pi*D_ext*L;
 e = opts.e_tank;

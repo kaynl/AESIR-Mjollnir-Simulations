@@ -1,4 +1,4 @@
-function state_vector  = System_of_equations_filling(t,u)
+function [state_vector, mdot_in, P_vap]  = System_of_equations_filling(t,u)
 
 global opts
 %This function gives the state vector that must be solved
@@ -30,7 +30,7 @@ disp("x : "+x)
 %% Find vaport volume
 
 V_tank=opts.V_tank;
-V_vap=V_tank-(1-x)*m_liq/rho_liq;
+V_vap=V_tank-(1-x)*(m_vap+m_liq)/rho_liq;
 
 %% Find vapor pressure:
 

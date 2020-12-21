@@ -12,12 +12,14 @@ opts.T_ext = 293;               %Exterior temperature (20°C)
 
 %% Physical Constants
 
-opts.g=9.81;                   %Gravitational Constant (m.s-2)
-opts.R = 8.314;                %Universal Gas Constant (J⋅K−1⋅mol−1) 
+opts.g=9.81;                                    %Gravitational Constant (m.s-2)
+opts.R = 8.314;                                 %Universal Gas Constant (J⋅K−1⋅mol−1) 
 
-opts.P_atm_sl = 101325;           %Atmospheric Pressure (N/m2)
-opts.stephan_cst = 5.67e-8;    %Stephan-Boltzman Constant (W/m2/K4)
-opts.eber_parameter = 0.89;    %Eber Parameter for vertex angle between 20-50 degrees
+opts.P_atm_sl = 101325;                         %Atmospheric Pressure (N/m2)
+opts.stephan_cst = 5.67e-8;                     %Stephan-Boltzman Constant (W/m2/K4)
+opts.eber_parameter = 0.89;                     %Eber Parameter for vertex angle between 20-50 degrees
+opts.Molecular_weight_air = 28.9647e-3;         %Molecular Weight of Air (kg/mol)
+opts.r_air = opts.R/opts.Molecular_weight_air;
 
 
 %% Requirements
@@ -39,12 +41,12 @@ opts.rho_ox = 785;                %Oxidizer density (kg/m^3)
 
 %% Tank Geometry
 
-opts.D_tank_ext = 16e-2;       %Tank external diameter (m)
-opts.D_tank_int = 15.42e-2;    %Tank internal diameter (m)
+opts.D_ext_tank = 16e-2;%10e-2;%    %Tank external diameter (m)
+opts.D_int_tank = 15.42e-2;%9.42e-2;%    %Tank internal diameter (m)
 opts.e_tank = 2.9e-3;          %Tank thickness
-opts.L_tank = 1.73;            %Tank Length (m)
-opts.V_tank = 31.2e-3;         %Tank Volume (m^3) (present in Tank_Temperature_finder_fct)
-opts.surface = pi*(opts.D_tank_ext)^2/4; %Rocket Surface
+opts.L_tank = 1.73;%0.73;%      %Tank Length (m)
+opts.V_tank = pi*(opts.D_int_tank)^2/4*opts.L_tank;%  31.2e-3;%       %Tank Volume (m^3) (present in Tank_Temperature_finder_fct)
+opts.surface = pi*(opts.D_ext_tank)^2/4; %Rocket Surface
 
 %% Kastrullen
 opts.L_kastrullen = 35e-2;  %length of Kastrullen
@@ -67,6 +69,7 @@ opts.T_cc = 3500;                           %Combustion Chamber temperature (K)
 
 opts.Molecular_weight_ox = 44.013e-3;  %molecular weight N2O (kg/mol)
 % opts.r_ox = opts.R/opts.Molecular_weight_ox;
+opts.gamma_ox = 1.31;       %Adiabatic Index Coefficient N2O
 
 %% Fuel Properties
 
@@ -122,19 +125,19 @@ opts.aluminium_emissivity = 0.8;            %Emissivity of painted tank
 
 
 %% Setup the Import Options
-import_options_N2O = delimitedTextImportOptions("NumVariables", 4);
+import_options_N2O = delimitedTextImportOptions("NumVariables", 8);
 import_options_c_star = delimitedTextImportOptions("NumVariables", 2);
 
 % Specify range and delimiter
-import_options_N2O.DataLines = [2, 257];
+import_options_N2O.DataLines = [8, 602];
 import_options_N2O.Delimiter = ";";
 
 import_options_c_star.DataLines = [2,23];
 import_options_c_star.Delimiter = ";";
 
 % Specify column names and types
-import_options_N2O.VariableNames = ["TemperatureK", "Pressurebar", "Liquiddensitykgm", "Gasdensitykgm"];
-import_options_N2O.VariableTypes = ["double", "double", "double", "double"];
+import_options_N2O.VariableNames = ["TemperatureK", "Pressurebar", "Liquiddensitykgm", "Gasdensitykgm", "LiquidIntEnergy", "VaporIntEnergy", "LiquidEnthalpy", "VaporEnthalpy"];
+import_options_N2O.VariableTypes = ["double", "double", "double", "double", "double", "double", "double", "double"];
 import_options_N2O.ExtraColumnsRule = "ignore";
 import_options_N2O.EmptyLineRule = "read";
 
@@ -155,27 +158,50 @@ clear import_options_c_star
 
 Temperature_set=NO2.TemperatureK;                 %Getting temperature range
 NO2_Psat_set=NO2.Pressurebar;                     %Getting saturation pressure for the temperatures above
-NO2_Rho_set=NO2.Liquiddensitykgm;                 %Getting density for the temperatures above
+NO2_Rhol_set=NO2.Liquiddensitykgm;                %Getting liquid density for the temperatures above
+NO2_Rhog_set=NO2.Gasdensitykgm;                   %Getting gaz density for the temperatures above
+NO2_Ul_set=NO2.LiquidIntEnergy;                   %Getting liquid internal energy for the temperatures above
+NO2_Ug_set=NO2.VaporIntEnergy;                    %Getting gaz internal Energy for the temperatures above
+
 
 opts.Psat_NO2_polynom=polyfit(Temperature_set,NO2_Psat_set,3);  %interpolation polynomial of degree 3
-opts.Rho_T_NO2_polynom=polyfit(Temperature_set,NO2_Rho_set,3);    %interpolation polynomial of degree 3
-opts.Rho_Psat_NO2_polynom=polyfit(NO2_Psat_set,NO2_Rho_set,3);    %interpolation polynomial of degree 3
+opts.RhoL_Psat_NO2_polynom=polyfit(NO2_Psat_set,NO2_Rhol_set,3);    %interpolation polynomial of degree 3
+
+opts.RhoL_T_NO2_polynom=polyfit(Temperature_set,NO2_Rhol_set,3);    %interpolation polynomial of degree 3
+opts.RhoG_T_NO2_polynom=polyfit(Temperature_set,NO2_Rhog_set,3);    %interpolation polynomial of degree 3
+opts.RhoL_P_NO2_polynom=polyfit(NO2_Psat_set,NO2_Rhol_set,3);    %interpolation polynomial of degree 3
+opts.RhoG_P_NO2_polynom=polyfit(NO2_Psat_set,NO2_Rhog_set,3);    %interpolation polynomial of degree 3
+
+opts.UL_T_NO2_polynom=polyfit(Temperature_set,NO2_Ul_set,3);    %interpolation polynomial of degree 3
+opts.UG_T_NO2_polynom=polyfit(Temperature_set,NO2_Ug_set,3);    %interpolation polynomial of degree 3
+opts.UL_P_NO2_polynom=polyfit(NO2_Psat_set,NO2_Ul_set,3);    %interpolation polynomial of degree 3
+opts.UG_P_NO2_polynom=polyfit(NO2_Psat_set,NO2_Ug_set,3);    %interpolation polynomial of degree 3
 
 
 
 opts.OF_set = C_star.OF;                                             %OF ratio range
 opts.C_star_set = C_star.CStarms;                                    %characteristic velocity C_Star
-% opts.C_Star_polynom=polyfit(OF_set,C_star_set,5);               %interpolation degree 3
+% opts.C_Star_polynom=polyfit(OF_set,C_star_set,5);                  %interpolation degree 3
+
+%% Storage Tank Geometry
+
+opts.D_ext_storage = 230e-3;        %Storage Tank external diameter (m)
+opts.V_storage = 50e-3;             %Storage Tank Volume (m^3)
+opts.D_int_storage = opts.D_ext_storage - 2*opts.e_tank;
+opts.L_storage = opts.V_storage/(pi*(opts.D_int_storage)^2/4);
 
 
 %% Filling Properties
 
-opts.d_filling_inlet = 8e-3;
-opts.d_filling_outlet = 0.7e-3;
+opts.d_filling_inlet = 4.7e-3;%2.5e-3;%m 
+opts.d_filling_outlet = 1.5e-3;%m
 
-opts.S_inlet = pi*(opts.d_filling_inlet/2)^2;
-opts.S_outlet = pi*(opts.d_filling_outlet/2)^2;
+opts.S_inlet = pi*(opts.d_filling_inlet)^2/4;
+opts.S_outlet = pi*(opts.d_filling_outlet)^2/4;
 
-opts.P_storage_tank = polyval(opts.Psat_NO2_polynom,opts.T_ext)*10^5;
-opts.cd_inlet = 0.75;
-opts.r_ox = 180.7175;%polyval(opts.Psat_NO2_polynom,opts.T_ext)*10^5 / py.CoolProp.CoolProp.PropsSI('D','T',opts.T_ext,'Q', 1,'NitrousOxide') / opts.T_ext;
+
+opts.P_storage_tank_init = polyval(opts.Psat_NO2_polynom,opts.T_ext)*10^5;
+opts.cd_inlet = 0.85;
+opts.cd_outlet = 0.95;
+opts.r_ox = py.CoolProp.CoolProp.PropsSI('P','T',opts.T_ext,'Q', 1,'NitrousOxide') / py.CoolProp.CoolProp.PropsSI('D','T',opts.T_ext,'Q', 1,'NitrousOxide') / opts.T_ext;
+% opts.r_ox = 180.7175;

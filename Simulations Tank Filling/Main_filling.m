@@ -3,10 +3,10 @@ run('./../setup')
 global opts
 global dt
 
-dt = 0.001;
+dt = 0.01;
 
 t0=0;                           %initial time of filling
-t_filling =10*60;               %final time
+t_filling =6*60;               %final time
 tf=t_filling+t0;                %arbitrary time 
 t_range=t0:0.01:tf;                %integration interval
 
@@ -43,6 +43,19 @@ m_liq = state(:,1);
 m_vap = state(:,2);
 U_tot = state(:,3);
 
+mdot_in = zeros(1,length(m_liq));
+P_tank = zeros(1,length(m_liq));
+
 %%
+
+for i=1:length(m_liq)
+     [state_vector, mdot_in_i, P_tank_i] = System_of_equations_filling(state(i,:),state(i,:));
+     mdot_in(i) = mdot_in_i;
+     P_tank(i) = P_tank_i;
+     
+end
+    
+    
+    
 
 Results_plots;
