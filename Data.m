@@ -3,7 +3,7 @@
 global opts
 
 opts.flight_state = 1;          %0 if test fire on the grouond and 1 if launch
-opts.filling_ratio = 1;         %Tank filling ratio
+opts.filling_ratio = 0.95;         %Tank filling ratio
 opts.launch_angle = 85;          %Self explanatory (in °)
 
 opts.drag_coefficient = 0.5;     
@@ -45,7 +45,7 @@ opts.D_ext_tank = 16e-2;%10e-2;%    %Tank external diameter (m)
 opts.D_int_tank = 15.42e-2;%9.42e-2;%    %Tank internal diameter (m)
 opts.e_tank = 2.9e-3;          %Tank thickness
 opts.L_tank = 1.73;%0.73;%      %Tank Length (m)
-opts.V_tank = pi*(opts.D_int_tank)^2/4*opts.L_tank;%  31.2e-3;%       %Tank Volume (m^3) (present in Tank_Temperature_finder_fct)
+opts.V_tank = pi*(opts.D_int_tank)^2/4*opts.L_tank;%33.1e-3;  %      %Tank Volume (m^3) (present in Tank_Temperature_finder_fct)
 opts.surface = pi*(opts.D_ext_tank)^2/4; %Rocket Surface
 
 %% Kastrullen
@@ -53,9 +53,11 @@ opts.L_kastrullen = 35e-2;  %length of Kastrullen
 
 %% Injector Geometry
 
-opts.n_inj=38;                 %Number of injectors
+opts.n_inj=30;                 %Number of injectors
 opts.r_inj=1.5e-3/2;           %injector radius (m)
 opts.Cd = 0.83;                %Discharge coefficient
+opts.L_inj = 15e-3;            %Injector Plate thickness (m)
+
 
 %% Combustion Chamber Geometry
 
@@ -194,7 +196,7 @@ opts.L_storage = opts.V_storage/(pi*(opts.D_int_storage)^2/4);
 %% Filling Properties
 
 opts.d_filling_inlet = 4.7e-3;%2.5e-3;%m 
-opts.d_filling_outlet = 1.5e-3;%m
+opts.d_filling_outlet = 0.9e-3;%m
 
 opts.S_inlet = pi*(opts.d_filling_inlet)^2/4;
 opts.S_outlet = pi*(opts.d_filling_outlet)^2/4;

@@ -95,7 +95,7 @@ V_vap_storage = m_vap_storage./rho_vap_storage;
 tank_fullness = V_liq_tank/(opts.V_tank)*100;
 storage_vapor = V_vap_storage/(opts.V_storage)*100;
 
-if tank_fullness < 100 && storage_vapor < 99
+if tank_fullness < 95 && storage_vapor < 99
     state_vector=[dm_N2O_tank_dt; dU_tank_dt; dm_N2O_storage_dt; dU_storage_dt; dTwall_storage_dt; dTwall_tank_dt];
 %     [m_N2O_tank; U_tank; m_N2O_storage; U_storage; T_wall_storage; T_wall_tank]
 

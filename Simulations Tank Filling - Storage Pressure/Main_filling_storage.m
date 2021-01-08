@@ -2,13 +2,11 @@ run('./../setup')
 
 global opts
 global dt
-global V_air_save
 
-V_air_save = 0;
-dt = 0.01;
+dt = 0.05;
 
 t0=0;                               %initial time of filling
-t_filling = 20*60;                   %final time
+t_filling = 10*60;                   %final time
 tf=t_filling+t0;                    %arbitrary time 
 t_range=t0:dt:tf;                   %integration interval
 
@@ -100,5 +98,5 @@ end
 
 disp("Loss of NOx (in kg) : "+(m_storage(1)-m_storage(end)-m_N2O_tank(end)))
 disp("Loss of NOx (in % of initial mass) : "+(m_storage(1)-m_storage(end)-m_N2O_tank(end))/m_storage(1)*100)
-
+disp("Final Tank Mass (in kg) : "+m_N2O_tank(end))
 Results_plots;
