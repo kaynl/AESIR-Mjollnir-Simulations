@@ -2,7 +2,6 @@ function [state_vector, T_tank]  = System_equations(t,u)
 
 global opts
 
-
 m_ox = u(1,:);
 U_total = u(2,:);
 T_wall = u(3,:);
