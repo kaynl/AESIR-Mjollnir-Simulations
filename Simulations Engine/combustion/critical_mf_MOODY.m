@@ -8,7 +8,7 @@ function [P_cc, mf_with_crit] = critical_mf_MOODY(P_tank,T_tank)
     n_inj = opts.n_inj;               %Number of injector holes
     Ai=n_inj*pi*D_inj^2/4;
     
-    P_cc = 10e5:1e4:P_tank;
+    P_cc = 10e5:5e5:P_tank;
     mf = zeros(1,length(P_cc));
     
     h1 = py.CoolProp.CoolProp.PropsSI('H','P',P_tank,'T', round(T_tank,2),'NitrousOxide');   %Enthalpie massic (J/kg)
@@ -16,7 +16,7 @@ function [P_cc, mf_with_crit] = critical_mf_MOODY(P_tank,T_tank)
     
     P_sat_tank = polyval(opts.Psat_NO2_polynom,T_tank)*10^6;
     
-    disp("P_sat : "+P_sat_tank/10^5+" bars")
+%     disp("P_sat : "+P_sat_tank/10^5+" bars")
     for i=1:length(P_cc)
         rho2_l = py.CoolProp.CoolProp.PropsSI('D','P',P_cc(i),'Q', 0,'NitrousOxide');     %Density of Oxidizer (kg/m^3)
         rho2_v = py.CoolProp.CoolProp.PropsSI('D','P',P_cc(i),'Q', 1,'NitrousOxide');     %Density of Oxidizer (kg/m^3)
@@ -50,9 +50,9 @@ function [P_cc, mf_with_crit] = critical_mf_MOODY(P_tank,T_tank)
 %     lgd = legend("Moody", "Moody critical");
 %     lgd.Location = 'southeast';
     
-    xlabel("Pressure drop (Pa)")
-    ylabel("Mass flow (kg/s)")
-    title("MOODY Mass flow (P1=59 bars, T1 = 287K)")
+%     xlabel("Pressure drop (Pa)")
+%     ylabel("Mass flow (kg/s)")
+%     title("MOODY Mass flow (P1=59 bars, T1 = 287K)")
     
    
     

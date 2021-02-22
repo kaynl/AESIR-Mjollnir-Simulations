@@ -41,7 +41,7 @@ R = opts.R;
 T_tank=Tank_Temperature(U_total,m_ox);
 
 x=x_vapor(U_total,m_ox,T_tank); %x_vapor computed thanks to the internal tank temperature
-disp("x : "+x)
+% disp("x : "+x)
 rho_liq = polyval(opts.RhoL_T_NO2_polynom,T_tank);
 rho_vap = polyval(opts.RhoG_T_NO2_polynom,T_tank);
 
@@ -52,28 +52,28 @@ T_N2 = T_tank;
 V_vap = (x*m_ox/rho_vap);
 V_N2 = V_vap;
 
-disp("V_N2 : "+V_N2*1000+" L")
+% disp("V_N2 : "+V_N2*1000+" L")
 
 P_N2 = (opts.P_N2_init*opts.V_N2_init/opts.T_N2_init)*T_N2/V_N2;
 
 P_N2O = polyval(opts.Psat_NO2_polynom,T_tank)*10^6;
-disp("P_N2O : "+P_N2O/10^5+" bars")
+% disp("P_N2O : "+P_N2O/10^5+" bars")
 
 
-P_tank = P_N2O+(opts.P_N2_init-polyval(opts.Psat_NO2_polynom,opts.T_N2_init)*10^6)*Tank_state/100;
-disp("P_tank : "+P_tank/10^5+" bars")
+P_tank = P_N2O+abs(opts.P_N2_init-polyval(opts.Psat_NO2_polynom,opts.T_N2_init)*10^6)*Tank_state/100;
+% disp("P_tank : "+P_tank/10^5+" bars")
 
-disp("Pcc : "+P_cc/10^5+" bars")
+% disp("Pcc : "+P_cc/10^5+" bars")
  
 %Massflows oxidizer/fuel/throat
 mf_ox=Mass_flow_oxidizer(T_tank,P_tank,P_cc);%outlet mass flow
 
-disp("mf ox : "+mf_ox)
+% disp("mf ox : "+mf_ox)
 A_fuel = pi*r_cc^2;
 G_Ox = mf_ox/A_fuel;
 mf_fuel = Mass_flow_fuel(G_Ox,r_cc);
 OF = mf_ox/mf_fuel;
-disp("OF : "+OF)
+% disp("OF : "+OF)
 
 mf_throat = Mass_flow_throat(P_cc,OF,At);
 
@@ -116,7 +116,7 @@ Ve = ExhaustSpeed(T_cc,Pe,P_cc,opts);
 
 
 
-if Tank_state<0
+if Tank_state<0.1
     % Eq of Motion
     [d2xdt2, d2ydt2] = EqofMotion(0,0,m_fuel,y,dxdt,dydt,speed_of_sound,rho_ext, flight_state,opts);
     if y<0
@@ -133,7 +133,7 @@ else
 %     Cs = ThrustCoefficient(Pe,P_cc,P_ext,At,opts);
 %     Tr = opts.combustion_efficiency*Thrust_using_Cs(mf_throat,Cs,OF,opts);
     Tr = opts.combustion_efficiency*Thrust(mf_throat,Ve,P_ext,Pe,opts);
-    disp("Thrust (kN) : "+Tr/1000)
+%     disp("Thrust (kN) : "+Tr/1000)
     [d2xdt2, d2ydt2] = EqofMotion(Tr,m_ox,m_fuel,y,dxdt,dydt,speed_of_sound,rho_ext, flight_state,opts);
     
     
@@ -158,7 +158,7 @@ end
 % disp("a_y (g) : "+d2ydt2./opts.g)
 % disp("Height : "+y)
 disp("Tank State : "+Tank_state+" % full")
-disp(" ")
+% disp(" ")
 
 end
 

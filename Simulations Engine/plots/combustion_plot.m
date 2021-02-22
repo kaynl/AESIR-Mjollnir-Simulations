@@ -74,11 +74,11 @@ ylabel("O/F")
 
 
 subplot(lignes,colonnes,7)
-plot(t_comb,P_tank(find(t<t_burn))/10^6,t_comb,polyval(opts.Psat_NO2_polynom,T_tank(find(t<t_burn))),t_comb,P_cc(find(t<t_burn))/10^6,t_comb,Pe(find(t<t_burn))/10^6)
+plot(t_comb,P_tank(find(t<t_burn))/10^6,t_comb,polyval(opts.Psat_NO2_polynom,T_tank(find(t<t_burn))),t_comb,0.8*polyval(opts.Psat_NO2_polynom,T_tank(find(t<t_burn))),t_comb,P_cc(find(t<t_burn))/10^6,t_comb,Pe(find(t<t_burn))/10^6)
 title("Pressure Over Time")
 xlabel("Time (s)")
 ylabel("Pressure (MPa)")
-lgd = legend("Tank Pressure (supercharge)","Tank Saturation Pressure","CC Pressure", "Exhaust Pressure");
+lgd = legend("Tank Pressure (supercharge)","Tank Saturation Pressure","0.8 Saturation Pressure","CC Pressure", "Exhaust Pressure");
 lgd.Location = 'southwest';
 
 %% Tank fillness

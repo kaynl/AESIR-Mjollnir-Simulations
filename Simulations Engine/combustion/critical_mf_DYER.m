@@ -60,12 +60,12 @@ function [critical_mf,critical_P_cc] = critical_mf_DYER(P_tank,T_tank)
     mf_ox(indexes_Pcc)=mf_ox(indexes_Pcc(end));
     
     
-    figure(1)
-    plot(P_tank-P_cc,mf_ox,P_tank-P_cc,mf_SPI,P_tank-P_cc,mf_HEM)
-    legend("Total","SPI","HEM")
-    xlabel("Pressure drop (Pa)")
-    ylabel("Mass flow (kg/s)")
-    title("DYER Mass flow (P1=59 bars, T1 = 287K)")
+%     figure(1)
+%     plot(P_tank-P_cc,mf_ox,P_tank-P_cc,mf_SPI,P_tank-P_cc,mf_HEM)
+%     legend("Total","SPI","HEM")
+%     xlabel("Pressure drop (Pa)")
+%     ylabel("Mass flow (kg/s)")
+%     title("DYER Mass flow (P1=59 bars, T1 = 287K)")
     
     
     

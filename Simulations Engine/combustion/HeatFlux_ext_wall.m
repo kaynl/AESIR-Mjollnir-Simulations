@@ -49,11 +49,11 @@ elseif flight_state == 1
     DeltaT=T_boundary-T_wall;
     Qdot_ext_w = h*S*DeltaT;
     
-    disp("h : "+h)
-    disp("T_boundary (K) : "+T_boundary)
-    disp("T_ext (K) : "+T_ext)
-    disp("T_wall (K) : "+T_wall)
-    disp("Speed (m/s) : "+V_rocket)
+%     disp("h : "+h)
+%     disp("T_boundary (K) : "+T_boundary)
+%     disp("T_ext (K) : "+T_ext)
+%     disp("T_wall (K) : "+T_wall)
+%     disp("Speed (m/s) : "+V_rocket)
 end
 
 

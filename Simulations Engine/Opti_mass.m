@@ -1,29 +1,38 @@
 % Code to optimize value over Supercharge Pressure & tank temperature subcooling
+tic
+
+run('./../setup')
 
 global opts
 dt = 0.1;
 
-t0=0;                   %initial time of ignition
+t0=0;                     %initial time of ignition
 t_burn = 125;             %final time
 tf=t_burn+t0;           %time when propelant is compeltely burned
 t_range=[t0 tf];       %integration interval
 
+N_opti_mass = 10;
+tol = odeset('RelTol',1e-4,'AbsTol',1e-6);
 
-N_opti = 10;
-T_tank_range = 273.15 + linspace(-10,20,N_opti);
-P_super_range = linspace(50e5,60e5,N_opti);
+mass_range = linspace(40,50,N_opti_mass);
+iteration = 1;
 
-Heatmap = zeros(N_opti,N_opti);
+Heights = zeros(1,N_opti_mass);
 
-for i=1:N_opti
-    for j=1:N_opti
+for i=1:N_opti_mass
     
-        T_init_ext = 283.15;    %K
-        T_init_tank = T_tank_range(i);          %K
-        opts.P_N2_init = P_super_range(i);      %Pa
-        opts.V_N2_init = 0.05*opts.V_tank;      %m^3
-        opts.T_N2_init = T_tank_range(i);       %K
+        disp(" ")
+        disp("Iteration : "+iteration+"/"+N_opti_mass)
+        disp(" ")
+        iteration = iteration+1;
+        pause(2)
         
+        T_init_ext = 278.15;    %K
+        T_init_tank = 287.13;          %K
+        opts.P_N2_init = 60e5;      %Pa
+        opts.V_N2_init = 0.05*opts.V_tank;      %m^3
+        opts.T_N2_init = 287.13;       %K
+       
         rho_liq = py.CoolProp.CoolProp.PropsSI('D','T',T_init_tank,'Q', 0,'NitrousOxide');
         rho_vap = py.CoolProp.CoolProp.PropsSI('D','T',T_init_tank,'Q', 1,'NitrousOxide');
         u_liq = py.CoolProp.CoolProp.PropsSI('U','T',T_init_tank,'Q', 0,'NitrousOxide');
@@ -45,12 +54,25 @@ for i=1:N_opti
         dxdt_init=0;
         dydt_init=0;
         r_throat_init = opts.D_throat/2;
-
+        opts.dry_mass = mass_range(i);
         Initial_conditions=[m_ox_init; U_total_init; T_wall_init; r_comb_chamber_init; r_throat_init; P_cc_init; x_init; y_init; dxdt_init; dydt_init];%initial vector
-
-        [t,state] = ode23s(@System_equations,t_range,Initial_conditions);%state1=m_tank_total, state2=U_tank_total,state3=T_tank_wall
-
-
-        Heatmap(i,j) = value;
-    end
+ 
+        [t,state] = ode15s(@System_equations,t_range,Initial_conditions,tol);%state1=m_tank_total, state2=U_tank_total,state3=T_tank_wall
+        y = state(:,8);
+        Pcc = state(:,6);
+        
+        Heights(i) = max(y);
+        
+        
+        clearvars -except i j tol Heights opts t_range mass_range iteration N_opti_mass
+    
 end
+toc
+
+figure(1)
+plot(mass_range,Heights/1000)
+ylabel("Max Altitude (km)")
+xlabel("Dry Mass of whole rocket")
+
+
+

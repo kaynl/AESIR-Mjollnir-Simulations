@@ -4,7 +4,7 @@ global opts
 
 opts.flight_state = 1;          %0 if test fire on the grouond and 1 if launch
 opts.filling_ratio = 0.95;         %Tank filling ratio
-opts.launch_angle = 85;          %Self explanatory (in °)
+opts.launch_angle = 87;          %Self explanatory (in °)
 
 opts.drag_coefficient = 0.5;     
 opts.combustion_efficiency = 0.9;
@@ -33,7 +33,10 @@ opts.parachute_mass = 10;
 opts.electronics_mass = 2.3;
 opts.bodyTube_mass = 7;
 opts.payload_mass = 2;
-opts.dry_mass = opts.parachute_mass + opts.electronics_mass + opts.bodyTube_mass + opts.payload_mass;
+
+opts.propulsionSystem = 24.504;
+
+opts.dry_mass = opts.parachute_mass + opts.electronics_mass + opts.bodyTube_mass + opts.payload_mass + opts.propulsionSystem;
 
 opts.m_ox_init=24.5;              %Oxidizer mass (kg)
 opts.m_fuel_init=3.1;             %Fuel Mass (kg)
@@ -42,9 +45,9 @@ opts.rho_ox = 785;                %Oxidizer density (kg/m^3)
 %% Tank Geometry
 
 opts.D_ext_tank = 16e-2;%10e-2;%    %Tank external diameter (m)
-opts.D_int_tank = 15.42e-2;%9.42e-2;%    %Tank internal diameter (m)
-opts.e_tank = 2.9e-3;          %Tank thickness
-opts.L_tank = 1.73;%0.73;%      %Tank Length (m)
+opts.e_tank = 3.5e-3;          %Tank thickness
+opts.D_int_tank = opts.D_ext_tank-2*opts.e_tank;%9.42e-2;%    %Tank internal diameter (m)
+opts.L_tank = 1.83;%0.73;%      %Tank Length (m)
 opts.V_tank = pi*(opts.D_int_tank)^2/4*opts.L_tank;%33.1e-3;  %      %Tank Volume (m^3) (present in Tank_Temperature_finder_fct)
 opts.surface = pi*(opts.D_ext_tank)^2/4; %Rocket Surface
 
@@ -52,20 +55,21 @@ opts.surface = pi*(opts.D_ext_tank)^2/4; %Rocket Surface
 opts.L_kastrullen = 35e-2;  %length of Kastrullen
 
 %% Injector Geometry
-
-opts.n_inj=30;                 %Number of injectors
-opts.r_inj=1.5e-3/2;           %injector radius (m)
+              
+opts.r_inj=1.2e-3/2;           %injector radius (m)
 opts.Cd = 0.83;                %Discharge coefficient
 opts.L_inj = 15e-3;            %Injector Plate thickness (m)
-
+opts.n_inj = 34;                %Number of injectors
 
 %% Combustion Chamber Geometry
 
-opts.D_cc_ext = 15e-2;                      %Combustion Chamber external diameter (m)
-opts.D_cc_int = opts.D_cc_ext-2*2.1e-3;     %Combustion Chamber interanl diameter (m)
+opts.D_cc_ext = 15.2e-2;                      %Combustion Chamber external diameter (m)
+opts.e_cc = 4e-3;
+opts.D_cc_int = opts.D_cc_ext-2*opts.e_cc;     %Combustion Chamber interanl diameter (m)*
+opts.L_cc_casing = 609.69e-3;               %Combustion Chamber Total Casing (pre_cc + cc)
 opts.L_pcc = 103.9e-3;                      %Pre-combustion chamber length
-opts.L_cc = 50e-2;                          %Combustion Chamber Total length(m)
-opts.T_cc = 3500;                           %Combustion Chamber temperature (K)
+opts.L_cc = 505.8e-3;                          %Combustion Chamber Total length(m)
+opts.T_cc = 3650;                           %Combustion Chamber temperature (K)
 
 %% Ox Properties
 
@@ -104,14 +108,15 @@ opts.air_thermal_conductivity = 0.02364;    %Thermal Conductivity Air (W/m.K)
 
 opts.gamma_combustion_products = 1.18;                   %Adiabatic Index Coefficient
 opts.Molecular_weigth_combustion_products = 29e-3;      %Molecular Weigth of products (kg/mol)
-opts.T_cc = 3500;                   %Combustion temperature (K)
+opts.T_cc = 3700;                                       %Combustion temperature (K)
 
 
 %% Nozzle Properties
 
-opts.D_throat = 39.37e-3;
-% opts.A_throat_init = pi*(opts.D_throat)^2/4;      %Nozzle Throat Area (m^2)
-opts.D_exit = 89.55e-3;
+opts.D_throat =38.4e-3;
+%opts.A_throat_init = pi*(opts.D_throat)^2/4;      %Nozzle Throat Area (m^2)
+Ae_At = 4.75;
+opts.D_exit = sqrt(Ae_At)*opts.D_throat;
 opts.A_exit = pi*(opts.D_exit)^2/4;          %Nozzle Exit Area (m^2)
 
 opts.beta_nozzle = 80;                       %Nozzle Inlet Angle (in °)

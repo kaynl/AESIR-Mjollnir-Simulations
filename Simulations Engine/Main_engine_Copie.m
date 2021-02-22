@@ -23,11 +23,11 @@ disp(" ")
 %% Influencial Parameters
 
 T_init_ext = 293.15;    %K
-T_init_tank = 287.15;    %K
+T_init_tank = 293.15;    %K
 opts.P_N2_init = 60e5; %Pa
 opts.V_N2_init = 0.05*opts.V_tank; %m^3
 opts.T_N2_init = T_init_tank; %K
-opts.dry_mass = 42;
+
 
 
 rho_liq = py.CoolProp.CoolProp.PropsSI('D','T',T_init_tank,'Q', 0,'NitrousOxide');
@@ -52,7 +52,6 @@ dxdt_init=0;
 dydt_init=0;
 r_throat_init = opts.D_throat/2;
 
-tol = odeset('RelTol',1e-5,'AbsTol',1e-5);
 Initial_conditions=[m_ox_init; U_total_init; T_wall_init; r_comb_chamber_init; r_throat_init; P_cc_init; x_init; y_init; dxdt_init; dydt_init];%initial vector
 
 %Solve initial value problem for ODE
@@ -60,7 +59,7 @@ disp("-----------------------")
 disp("Solving Differential Eq") 
 disp("-----------------------")
 disp(" ")
-[t,state] = ode23s(@System_equations,t_range,Initial_conditions,tol);%state1=m_tank_total, state2=U_tank_total,state3=T_tank_wall
+[t,state] = ode23s(@System_equations,t_range,Initial_conditions);%state1=m_tank_total, state2=U_tank_total,state3=T_tank_wall
 
 m_ox_total = state(:,1);                          %total mass in the tank according to time
 
@@ -109,9 +108,7 @@ Mw=opts.Molecular_weigth_combustion_products;
 R=opts.R;
 
 toc
-disp(max(y))
 pause(10)
-
 %%
 disp("-----------------------")
 disp("Post-Compute Calcultion") 
