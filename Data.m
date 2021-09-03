@@ -8,7 +8,7 @@ opts.launch_angle = 87;          %Self explanatory (in °)
 
 opts.drag_coefficient = 0.5;     
 opts.combustion_efficiency = 0.9;
-opts.T_ext = 293;               %Exterior temperature (20°C)
+opts.T_ext = 293;               %(K) Exterior temperature (20°C)
 
 %% Physical Constants
 
@@ -57,9 +57,13 @@ opts.L_kastrullen = 35e-2;  %length of Kastrullen
 %% Injector Geometry
               
 opts.r_inj=1.2e-3/2;           %injector radius (m)
-opts.Cd = 0.83;                %Discharge coefficient
+opts.Cd = 0.89;                %Discharge coefficient
 opts.L_inj = 15e-3;            %Injector Plate thickness (m)
-opts.n_inj = 34;                %Number of injectors
+opts.n_inj = 34;               %Number of injectors
+
+opts.r_inj_plate = 30e-3;      %m
+opts.mass_inj = 0.271;         %kg
+opts.e_inj = 0.013;             %m
 
 %% Combustion Chamber Geometry
 
@@ -67,7 +71,8 @@ opts.D_cc_ext = 15.2e-2;                      %Combustion Chamber external diame
 opts.e_cc = 4e-3;
 opts.D_cc_int = opts.D_cc_ext-2*opts.e_cc;     %Combustion Chamber interanl diameter (m)*
 opts.L_cc_casing = 609.69e-3;               %Combustion Chamber Total Casing (pre_cc + cc)
-opts.L_pcc = 103.9e-3;                      %Pre-combustion chamber length
+opts.L_pcc = 75e-3;                      %Pre-combustion chamber length
+opts.mass_pcc = 0.5;                     %Pre-combustion chamber mass
 opts.L_cc = 505.8e-3;                          %Combustion Chamber Total length(m)
 opts.T_cc = 3650;                           %Combustion Chamber temperature (K)
 
@@ -76,6 +81,10 @@ opts.T_cc = 3650;                           %Combustion Chamber temperature (K)
 opts.Molecular_weight_ox = 44.013e-3;  %molecular weight N2O (kg/mol)
 % opts.r_ox = opts.R/opts.Molecular_weight_ox;
 opts.gamma_ox = 1.31;       %Adiabatic Index Coefficient N2O
+opts.visc_nox = 2.98e-5;   %Pa.s
+opts.calorific_capacity_nox = 2269.5;       %J/kg
+opts.thermal_conductivity_nox = 103e-3;             %W/m.K
+
 
 %% Fuel Properties
 
@@ -128,12 +137,14 @@ opts.L_nozzle = 154.55e-3;                   %Nozzle Length (m)
 opts.aluminium_thermal_conductivity=236;    %Wm-1K-1 at 0 degree celcius
 opts.rho_alu = 2700;                        %Density Aluminium (kg/m^3)
 opts.alu_thermal_capacity = 897;            %J/K/kg
-opts.aluminium_emissivity = 0.8;            %Emissivity of painted tank
-
+opts.aluminium_emissivity_painted = 0.8;    %Emissivity of painted tank
+opts.aluminium_emissivity = 0.3;           %Emissivity of plain aluminium
+opts.aluminium_absorbitivity = 0.4;         %Absorptivity of plain aluminium
 
 %% Setup the Import Options
 import_options_N2O = delimitedTextImportOptions("NumVariables", 8);
 import_options_c_star = delimitedTextImportOptions("NumVariables", 2);
+import_options_CO2 = delimitedTextImportOptions("NumVariables", 8); % Modified by Benjamin Verbeek 2021-05-11 20:00 CEST "Added CO2 data identically to N2O"
 
 % Specify range and delimiter
 import_options_N2O.DataLines = [8, 602];
@@ -141,6 +152,9 @@ import_options_N2O.Delimiter = ";";
 
 import_options_c_star.DataLines = [2,23];
 import_options_c_star.Delimiter = ";";
+
+import_options_CO2.DataLines = [8, 602];
+import_options_CO2.Delimiter = ";";
 
 % Specify column names and types
 import_options_N2O.VariableNames = ["TemperatureK", "Pressurebar", "Liquiddensitykgm", "Gasdensitykgm", "LiquidIntEnergy", "VaporIntEnergy", "LiquidEnthalpy", "VaporEnthalpy"];
@@ -153,13 +167,20 @@ import_options_c_star.VariableTypes = ["double", "double"];
 import_options_c_star.ExtraColumnsRule = "ignore";
 import_options_c_star.EmptyLineRule = "read";
 
+import_options_CO2.VariableNames = ["TemperatureK", "Pressurebar", "Liquiddensitykgm", "Gasdensitykgm", "LiquidIntEnergy", "VaporIntEnergy", "LiquidEnthalpy", "VaporEnthalpy"];
+import_options_CO2.VariableTypes = ["double", "double", "double", "double", "double", "double", "double", "double"];
+import_options_CO2.ExtraColumnsRule = "ignore";
+import_options_CO2.EmptyLineRule = "read";
+
 % Import the data
 NO2 = readtable("./datasets/nitrous-oxide_LVsaturation.csv", import_options_N2O);
 C_star = readtable("./datasets/characteristic_velocity.csv", import_options_c_star);
+CO2 = readtable("./datasets/carbon-dioxide_LVsaturation.csv", import_options_CO2);
 
 %% Clear temporary variables
 clear import_options_N2O
 clear import_options_c_star
+clear import_options_CO2
 
 %% INTERPOLATION
 
@@ -190,6 +211,29 @@ opts.OF_set = C_star.OF;                                             %OF ratio r
 opts.C_star_set = C_star.CStarms;                                    %characteristic velocity C_Star
 % opts.C_Star_polynom=polyfit(OF_set,C_star_set,5);                  %interpolation degree 3
 
+
+
+Temperature_set=CO2.TemperatureK;                 %Getting temperature range
+CO2_Psat_set=CO2.Pressurebar;                     %Getting saturation pressure for the temperatures above
+CO2_Rhol_set=CO2.Liquiddensitykgm;                %Getting liquid density for the temperatures above
+CO2_Rhog_set=CO2.Gasdensitykgm;                   %Getting gaz density for the temperatures above
+CO2_Ul_set=CO2.LiquidIntEnergy;                   %Getting liquid internal energy for the temperatures above
+CO2_Ug_set=CO2.VaporIntEnergy;                    %Getting gaz internal Energy for the temperatures above
+
+
+opts.Psat_CO2_polynom=polyfit(Temperature_set,CO2_Psat_set,3);  %interpolation polynomial of degree 3
+opts.RhoL_Psat_CO2_polynom=polyfit(CO2_Psat_set,CO2_Rhol_set,3);    %interpolation polynomial of degree 3
+
+opts.RhoL_T_CO2_polynom=polyfit(Temperature_set,CO2_Rhol_set,3);    %interpolation polynomial of degree 3
+opts.RhoG_T_CO2_polynom=polyfit(Temperature_set,CO2_Rhog_set,3);    %interpolation polynomial of degree 3
+opts.RhoL_P_CO2_polynom=polyfit(CO2_Psat_set,CO2_Rhol_set,3);    %interpolation polynomial of degree 3
+opts.RhoG_P_CO2_polynom=polyfit(CO2_Psat_set,CO2_Rhog_set,3);    %interpolation polynomial of degree 3
+
+opts.UL_T_CO2_polynom=polyfit(Temperature_set,CO2_Ul_set,3);    %interpolation polynomial of degree 3
+opts.UG_T_CO2_polynom=polyfit(Temperature_set,CO2_Ug_set,3);    %interpolation polynomial of degree 3
+opts.UL_P_CO2_polynom=polyfit(CO2_Psat_set,CO2_Ul_set,3);    %interpolation polynomial of degree 3
+opts.UG_P_CO2_polynom=polyfit(CO2_Psat_set,CO2_Ug_set,3);    %interpolation polynomial of degree 3
+
 %% Storage Tank Geometry
 
 opts.D_ext_storage = 230e-3;        %Storage Tank external diameter (m)
@@ -207,7 +251,7 @@ opts.S_inlet = pi*(opts.d_filling_inlet)^2/4;
 opts.S_outlet = pi*(opts.d_filling_outlet)^2/4;
 
 
-opts.P_storage_tank_init = polyval(opts.Psat_NO2_polynom,opts.T_ext)*10^5;
+opts.P_storage_tank_init = polyval(opts.Psat_NO2_polynom,opts.T_ext)*10^5;  % NOTE: not changed /Benjamin
 opts.cd_inlet = 0.85;
 opts.cd_outlet = 0.95;
 opts.r_ox = py.CoolProp.CoolProp.PropsSI('P','T',opts.T_ext,'Q', 1,'NitrousOxide') / py.CoolProp.CoolProp.PropsSI('D','T',opts.T_ext,'Q', 1,'NitrousOxide') / opts.T_ext;

@@ -9,8 +9,8 @@
 % MoC methodology from 
 % Inherited plotting options from the works of D.
 
-clear;
-clc;
+% clear;
+% clc;
 
 %% INPUTS
 % Geometry

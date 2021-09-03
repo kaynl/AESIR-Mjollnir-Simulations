@@ -5,9 +5,11 @@ Data
 
 path(pathdef);
 
-addpath('./datasets');
-addpath('./Simulations Engine/combustion');
-addpath('./Simulations Engine/thrust');
-addpath('./Simulations Engine/flight');
-addpath('./Simulations Engine/plots');
-addpath('./Simulations Tank Filling');
+addpath('./Datasets');
+addpath('./Whole Engine')
+addpath('./Whole Engine/combustion');
+addpath('./Whole Engine/thrust');
+addpath('./Whole Engine/flight');
+addpath('./Whole Engine/plots');
+addpath('./Tank/Tank Filling - Non-cst Storage P');
+addpath('./Whole Engine/sensors');
