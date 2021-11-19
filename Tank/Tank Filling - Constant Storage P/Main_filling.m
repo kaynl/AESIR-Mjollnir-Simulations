@@ -1,4 +1,5 @@
-run('./../setup')
+run('../../setup')
+run('../../Data')
 
 global opts
 global dt
@@ -18,6 +19,7 @@ disp(" ")
 
 T_init = opts.T_ext;    %K
 V_tank = opts.V_tank;   %m^3
+opts.P_storage_tank = 50e5; %50 bars, to be checked and to be defined in data file 
 
 rho_vap = py.CoolProp.CoolProp.PropsSI('D','P',opts.P_storage_tank, 'Q', 1,'NitrousOxide');
 
