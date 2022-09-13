@@ -2,6 +2,10 @@ function [state_vector, m_tot, h_liq, h_gas, h_air_ext]  = System_equations(t,u)
 
 global opts
 
+
+% TODO: Figure out some way of selecting which parts of the model to use.
+
+
 m_ox = u(1,:);
 U_total = u(2,:);
 T_wall = u(3,:);

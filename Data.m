@@ -1,5 +1,10 @@
 %%% This file gathers all engine data needed for the simulation
 
+% TODO: Split data into parameters and "constants" based on how we need
+%       to use them.
+% TODO: Create a good way to run a specific simulation with a certain set
+%       of parameter choices.
+
 global opts
 
 opts.flight_state = 1;          %0 if test fire on the grouond and 1 if launch
@@ -191,6 +196,11 @@ NO2_Rhog_set=NO2.Gasdensitykgm;                   %Getting gaz density for the t
 NO2_Ul_set=NO2.LiquidIntEnergy;                   %Getting liquid internal energy for the temperatures above
 NO2_Ug_set=NO2.VaporIntEnergy;                    %Getting gaz internal Energy for the temperatures above
 
+% TODO: Make sure that degree 3 gives a good interpolation
+%       A: doesn't really seem so.
+% TODO: Investigate how and where the interpolation results are used
+% TODO: Update to a better interpolation method where necessary (eg.
+%       linear)
 
 opts.Psat_NO2_polynom=polyfit(Temperature_set,NO2_Psat_set,3);  %interpolation polynomial of degree 3
 opts.RhoL_Psat_NO2_polynom=polyfit(NO2_Psat_set,NO2_Rhol_set,3);    %interpolation polynomial of degree 3
@@ -204,7 +214,6 @@ opts.UL_T_NO2_polynom=polyfit(Temperature_set,NO2_Ul_set,3);    %interpolation p
 opts.UG_T_NO2_polynom=polyfit(Temperature_set,NO2_Ug_set,3);    %interpolation polynomial of degree 3
 opts.UL_P_NO2_polynom=polyfit(NO2_Psat_set,NO2_Ul_set,3);    %interpolation polynomial of degree 3
 opts.UG_P_NO2_polynom=polyfit(NO2_Psat_set,NO2_Ug_set,3);    %interpolation polynomial of degree 3
-
 
 
 opts.OF_set = C_star.OF;                                             %OF ratio range
@@ -236,6 +245,9 @@ opts.UG_P_CO2_polynom=polyfit(CO2_Psat_set,CO2_Ug_set,3);    %interpolation poly
 
 %% Storage Tank Geometry
 
+% TODO: Make sure that this data is only used for the tank filling
+%       simulation and remove/move it.
+
 opts.D_ext_storage = 230e-3;        %Storage Tank external diameter (m)
 opts.V_storage = 50e-3;             %Storage Tank Volume (m^3)
 opts.D_int_storage = opts.D_ext_storage - 2*opts.e_tank;
@@ -243,6 +255,9 @@ opts.L_storage = opts.V_storage/(pi*(opts.D_int_storage)^2/4);
 
 
 %% Filling Properties
+
+% TODO: Make sure that this data is only used for the tank filling
+%       simulation and remove/move it.
 
 opts.d_filling_inlet = 4.7e-3;%2.5e-3;%m 
 opts.d_filling_outlet = 0.9e-3;%m
@@ -254,5 +269,5 @@ opts.S_outlet = pi*(opts.d_filling_outlet)^2/4;
 opts.P_storage_tank_init = polyval(opts.Psat_NO2_polynom,opts.T_ext)*10^5;  % NOTE: not changed /Benjamin
 opts.cd_inlet = 0.85;
 opts.cd_outlet = 0.95;
-opts.r_ox = py.CoolProp.CoolProp.PropsSI('P','T',opts.T_ext,'Q', 1,'NitrousOxide') / py.CoolProp.CoolProp.PropsSI('D','T',opts.T_ext,'Q', 1,'NitrousOxide') / opts.T_ext;
+%opts.r_ox = py.CoolProp.CoolProp.PropsSI('P','T',opts.T_ext,'Q', 1,'NitrousOxide') / py.CoolProp.CoolProp.PropsSI('D','T',opts.T_ext,'Q', 1,'NitrousOxide') / opts.T_ext;
 % opts.r_ox = 180.7175;

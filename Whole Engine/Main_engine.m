@@ -21,6 +21,12 @@ disp("-----------------------")
 disp(" ")
 
 
+% TODO: Figure out a way to run this script with a given choice of parametr
+%       values instead of having to change it in the file every time.
+% TODO: Remove the pressurization system.
+
+
+
 %% Influencial Parameters
 
 [T_ext_model, ~, ~, ~] = atmoscoesa(0);
