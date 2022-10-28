@@ -19,14 +19,14 @@ disp(" ")
 T_init = opts.T_ext;    %K
 V_tank = opts.V_tank;   %m^3
 
-rho_vap = polyval(opts.RhoG_T_NO2_polynom,opts.T_ext);
-rho_liq = polyval(opts.RhoL_T_NO2_polynom,opts.T_ext);
+rho_vap = fnval(opts.RhoG_T_NO2_spline,opts.T_ext);
+rho_liq = fnval(opts.RhoL_T_NO2_spline,opts.T_ext);
 
 m_N2O_tank_init = rho_vap*opts.V_tank;
-U_tank_init = m_N2O_tank_init*polyval(opts.UG_T_NO2_polynom,opts.T_ext)*10^3;
+U_tank_init = m_N2O_tank_init*fnval(opts.UG_T_NO2_spline,opts.T_ext)*10^3;
 
 m_N2O_storage_init = rho_liq*opts.V_storage;
-U_storage_init = rho_liq*opts.V_storage*polyval(opts.UL_T_NO2_polynom,opts.T_ext)*10^3;
+U_storage_init = rho_liq*opts.V_storage*fnval(opts.UL_T_NO2_spline,opts.T_ext)*10^3;
              
 T_wall_storage_init = opts.T_ext;
 T_wall_tank_init = opts.T_ext;
@@ -66,7 +66,7 @@ disp("-----------------------")
 pause(5)
 
 m_liq_tank = (1-x_tank').*m_N2O_tank;
-rho_liq_tank = polyval(opts.RhoL_T_NO2_polynom,T_tank);
+rho_liq_tank = fnval(opts.RhoL_T_NO2_spline,T_tank);
 V_liq_tank = m_liq_tank./rho_liq_tank';
 
 %% Post-Compute

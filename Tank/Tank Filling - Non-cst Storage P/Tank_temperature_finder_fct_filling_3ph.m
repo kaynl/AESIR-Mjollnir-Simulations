@@ -5,11 +5,11 @@ function F_tank = Tank_temperature_finder_fct_filling_3ph(U,m,T,V)
     global opts
     
     
-    %Polynomial liquid density (kg/m^3)
-    rho_liq = polyval(opts.RhoL_T_NO2_polynom,T);
+    % Spline liquid density (kg/m^3)
+    rho_liq = fnval(opts.RhoL_T_NO2_spline,T);
     
-    %Polynomial vapor density (kg/m^3)
-    rho_vap = polyval(opts.RhoG_T_NO2_polynom,T);
+    % Spline vapor density (kg/m^3)
+    rho_vap = fnval(opts.RhoG_T_NO2_spline,T);
         
     x=x_vapor_filling_temperature(U,m,T);
     

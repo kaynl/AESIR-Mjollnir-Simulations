@@ -32,12 +32,12 @@ m_liq_tank = (1-x_tank)*m_N2O_tank;
 
 %% Find pressures
 
-P_tank = polyval(opts.Psat_NO2_polynom,T_tank)*10^6;
-P_storage = polyval(opts.Psat_NO2_polynom,T_storage)*10^6;
+P_tank = fnval(opts.Psat_NO2_spline,T_tank)*10^6;
+P_storage = fnval(opts.Psat_NO2_spline,T_storage)*10^6;
 
 
-rho_vap_tank = polyval(opts.RhoG_T_NO2_polynom,T_tank);
-rho_liq_tank = polyval(opts.RhoL_T_NO2_polynom,T_tank);
+rho_vap_tank = fnval(opts.RhoG_T_NO2_spline,T_tank);
+rho_liq_tank = fnval(opts.RhoL_T_NO2_spline,T_tank);
 
 V_liq_tank = m_liq_tank/rho_liq_tank;
 
@@ -88,7 +88,7 @@ dU_storage_dt = -mdot_in_liq*h_inlet_storage + Qdot_w_t_storage;
 
 %% Return the state vector:
 
-rho_vap_storage = polyval(opts.RhoG_T_NO2_polynom,T_storage);
+rho_vap_storage = fnval(opts.RhoG_T_NO2_spline,T_storage);
 m_vap_storage = (x_storage).*m_N2O_storage';
 V_vap_storage = m_vap_storage./rho_vap_storage;
 

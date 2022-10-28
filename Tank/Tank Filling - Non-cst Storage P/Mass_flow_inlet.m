@@ -9,7 +9,7 @@ cd_inlet=opts.cd_inlet;         %Pressure drop coefficient
 
 Cf = 0.82;
 
-rho_liq = polyval(opts.RhoL_T_NO2_polynom,T_storage);
+rho_liq = fnval(opts.RhoL_T_NO2_spline,T_storage);
 deltaP=P_storage-P_tank;
 
 if deltaP<=0

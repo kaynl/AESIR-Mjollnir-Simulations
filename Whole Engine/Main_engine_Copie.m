@@ -136,15 +136,15 @@ for i=1:length(T_tank)
         T_tank(i) = Tank_Temperature(U_tank_total(i),m_ox_total(i));
         x_vap(i) = x_vapor(U_tank_total(i),m_ox_total(i),T_tank(i));
         
-        rho_vap = polyval(opts.RhoG_T_NO2_polynom,T_tank(i));
-        rho_liq = polyval(opts.RhoL_T_NO2_polynom,T_tank(i));
+        rho_vap = fnval(opts.RhoG_T_NO2_spline,T_tank(i));
+        rho_liq = fnval(opts.RhoL_T_NO2_spline,T_tank(i));
         Tank_state = (1-x_vap(i))*m_ox_total(i)/(rho_liq*opts.V_tank)*100;
         T_N2 = T_tank(i);
         V_N2 = x_vap(i)*m_ox_total(i)/rho_vap;
         
         P_N2(i) = (opts.P_N2_init*opts.V_N2_init/opts.T_N2_init)*T_N2/V_N2;
-        P_N2O(i) = polyval(opts.Psat_NO2_polynom,T_tank(i))*10^6;
-        P_tank(i) = P_N2O(i)+(opts.P_N2_init-polyval(opts.Psat_NO2_polynom,opts.T_N2_init)*10^6)*Tank_state/100;
+        P_N2O(i) = fnval(opts.Psat_NO2_spline,T_tank(i))*10^6;
+        P_tank(i) = P_N2O(i)+(opts.P_N2_init-fnval(opts.Psat_NO2_spline,opts.T_N2_init)*10^6)*Tank_state/100;
         
         mf_ox(i) = Mass_flow_oxidizer(T_tank(i),P_tank(i),P_cc(i));
         G_Ox = mf_ox(i)/A_fuel(i);

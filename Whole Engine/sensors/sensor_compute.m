@@ -86,7 +86,7 @@ epsylon_al = opts.aluminium_emissivity;         %emissivity
 Cp_al = opts.alu_thermal_capacity;              %calorific capacity
 
 
-rho_Nox_cc = polyval(opts.RhoG_P_NO2_polynom, P_cc);      %kg/m3
+rho_Nox_cc = fnval(opts.RhoG_P_NO2_spline, P_cc);      %kg/m3
 
 Re = mf_ox*opts.L_pcc/(opts.visc_nox*A_inj_plate);
 Pr = opts.visc_nox*opts.calorific_capacity_nox/opts.thermal_conductivity_nox;

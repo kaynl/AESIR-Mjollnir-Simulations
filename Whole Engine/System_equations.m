@@ -48,8 +48,8 @@ T_tank=Tank_Temperature(U_total,m_ox);
 
 x=x_vapor(U_total,m_ox,T_tank); %x_vapor computed thanks to the internal tank temperature
 % disp("x : "+x)
-rho_liq = polyval(opts.RhoL_T_NO2_polynom,T_tank);
-rho_vap = polyval(opts.RhoG_T_NO2_polynom,T_tank);
+rho_liq = fnval(opts.RhoL_T_NO2_spline,T_tank);
+rho_vap = fnval(opts.RhoG_T_NO2_spline,T_tank);
 
 Tank_state = (1-x)*m_ox/(rho_liq*opts.V_tank)*100;
 
@@ -62,11 +62,11 @@ V_N2 = V_vap;
 
 P_N2 = (opts.P_N2_init*opts.V_N2_init/opts.T_N2_init)*T_N2/V_N2;
 
-P_N2O = polyval(opts.Psat_NO2_polynom,T_tank)*10^6;
+P_N2O = fnval(opts.Psat_NO2_spline,T_tank)*10^6;
 % disp("P_N2O : "+P_N2O/10^5+" bars")
 
 
-P_tank = P_N2O+abs(opts.P_N2_init-polyval(opts.Psat_NO2_polynom,opts.T_N2_init)*10^6)*Tank_state/100;
+P_tank = P_N2O+abs(opts.P_N2_init-fnval(opts.Psat_NO2_spline,opts.T_N2_init)*10^6)*Tank_state/100;
 % disp("P_tank : "+P_tank/10^5+" bars")
 
 % disp("Pcc : "+P_cc/10^5+" bars")

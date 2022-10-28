@@ -20,7 +20,7 @@ T_tank=T_ext;
 rho_liq=py.CoolProp.CoolProp.PropsSI('D','T',T_tank,'Q', 0,'NitrousOxide');
 %% Find saturation pressure (liquid phase pressure):
 disp("T_tank : "+T_tank)
-P_liq = polyval(opts.Psat_NO2_polynom,T_tank)*10^5; %P_tank (=saturation pressure) is computed through an interpolation of AirLiquid data
+P_liq = fnval(opts.Psat_NO2_spline,T_tank)*10^5; %P_tank (=saturation pressure) is computed through an interpolation of AirLiquid data
 
 %% Find vapor fraction
 

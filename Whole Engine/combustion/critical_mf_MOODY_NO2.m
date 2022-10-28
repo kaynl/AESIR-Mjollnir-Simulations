@@ -14,7 +14,7 @@ function [P_cc, mf_with_crit] = critical_mf_MOODY_NO2(P_tank,T_tank, Cd)
     h1 = py.CoolProp.CoolProp.PropsSI('H','P',round(P_tank,2),'T', round(T_tank,2),'NitrousOxide');   %Enthalpie massic (J/kg)
     s1 = py.CoolProp.CoolProp.PropsSI('S','P',round(P_tank,2),'T', round(T_tank,2),'NitrousOxide');   %Enthalpie massic (J/K.kg)
     
-    P_sat_tank = polyval(opts.Psat_NO2_polynom,T_tank)*10^6;
+    % P_sat_tank = fnval(opts.Psat_NO2_spline,T_tank)*10^6;
     
 %     disp("P_sat : "+P_sat_tank/10^5+" bars")
     for i=1:length(P_cc)

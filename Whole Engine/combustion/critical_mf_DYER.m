@@ -20,8 +20,8 @@ function [critical_mf,critical_P_cc] = critical_mf_DYER(P_tank,T_tank)
     cv = py.CoolProp.CoolProp.PropsSI('CVMOLAR','P',P_tank,'T',T_tank,'NitrousOxide');
     gamma = cp/cv;
     
-    P_sat = polyval(opts.Psat_NO2_polynom,T_tank)*10^6;
-    rho_Ox_1 = polyval(opts.RhoL_T_NO2_polynom,T_tank);           %Density of Oxidizer (kg/m^3)
+    P_sat = fnval(opts.Psat_NO2_spline,T_tank)*10^6;
+    rho_Ox_1 = fnval(opts.RhoL_T_NO2_spline,T_tank);           %Density of Oxidizer (kg/m^3)
     
     disp("P_sat : "+P_sat/10^5+" bars")
     for i=1:length(P_cc)

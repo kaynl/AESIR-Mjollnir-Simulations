@@ -10,11 +10,11 @@ sgtitle("Filling Parameters",'FontSize', 20, 'Color','black','FontWeight','bold'
 
 
 m_vap_tank = (x_tank').*m_N2O_tank;
-rho_vap_tank = polyval(opts.RhoG_T_NO2_polynom,T_tank);
+rho_vap_tank = fnval(opts.RhoG_T_NO2_spline,T_tank);
 V_vap_tank = m_vap_tank./rho_vap_tank';
 
 m_liq_tank = (1-x_tank').*m_N2O_tank;
-rho_liq_tank = polyval(opts.RhoL_T_NO2_polynom,T_tank);
+rho_liq_tank = fnval(opts.RhoL_T_NO2_spline,T_tank);
 V_liq_tank = m_liq_tank./rho_liq_tank';
 
 
@@ -27,11 +27,11 @@ legend("V_l_i_q","V_v_a_p")
 
 %% Mass storage
 
-rho_vap_storage = polyval(opts.RhoG_T_NO2_polynom,T_storage);
+rho_vap_storage = fnval(opts.RhoG_T_NO2_spline,T_storage);
 m_vap_storage = (x_storage).*m_storage';
 V_vap_storage = m_vap_storage./rho_vap_storage;
 
-rho_liq_storage = polyval(opts.RhoL_T_NO2_polynom,T_storage);
+rho_liq_storage = fnval(opts.RhoL_T_NO2_spline,T_storage);
 m_liq_storage = (1-x_storage).*m_storage';
 V_liq_storage = m_liq_storage./rho_liq_storage;
 
