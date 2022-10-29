@@ -31,14 +31,14 @@ U_storage_init = rho_liq*opts.V_storage*fnval(opts.UL_T_NO2_spline,opts.T_ext)*1
 T_wall_storage_init = opts.T_ext;
 T_wall_tank_init = opts.T_ext;
 
-Initial_conditions=[m_N2O_tank_init; U_tank_init; m_N2O_storage_init; U_storage_init; T_wall_storage_init; T_wall_tank_init];   %initial vector
+initial_conditions=[m_N2O_tank_init; U_tank_init; m_N2O_storage_init; U_storage_init; T_wall_storage_init; T_wall_tank_init];   %initial vector
 
 %Solve initial value problem for ODE
 disp("-----------------------")
 disp("Solving Differential Eq") 
 disp("-----------------------")
 disp(" ")
-[t,state] = ode23s(@System_of_equations_filling_storage,t_range,Initial_conditions);
+[t,state] = ode23s(@System_of_equations_filling_storage,t_range,initial_conditions);
 
 
 m_N2O_tank = state(:,1);

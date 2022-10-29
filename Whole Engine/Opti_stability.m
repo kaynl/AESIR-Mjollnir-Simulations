@@ -68,10 +68,10 @@ for i=1:N_opti_temp
         dydt_init=0;
         r_throat_init = opts.D_throat/2;
         
-        Initial_conditions=[m_ox_init; U_total_init; T_wall_init; r_comb_chamber_init; r_throat_init; P_cc_init; x_init; y_init; dxdt_init; dydt_init];%initial vector
+        initial_conditions=[m_ox_init; U_total_init; T_wall_init; r_comb_chamber_init; r_throat_init; P_cc_init; x_init; y_init; dxdt_init; dydt_init];%initial vector
         
         opts.tank_state = 100;
-        [t,state] = RungeKunta4(@System_equations,t_range,0.005,Initial_conditions);
+        [t,state] = RungeKunta4(@System_equations,t_range,0.005,initial_conditions);
         y = state(8,:);
         P_cc = state(6,:);
         

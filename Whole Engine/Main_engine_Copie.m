@@ -56,14 +56,14 @@ dydt_init=0;
 r_throat_init = opts.D_throat/2;
 
 tol = odeset('RelTol',10^-5,'AbsTol',10^-3);
-Initial_conditions=[m_ox_init; U_total_init; T_wall_init; r_comb_chamber_init; r_throat_init; P_cc_init; x_init; y_init; dxdt_init; dydt_init];%initial vector
+initial_conditions=[m_ox_init; U_total_init; T_wall_init; r_comb_chamber_init; r_throat_init; P_cc_init; x_init; y_init; dxdt_init; dydt_init];%initial vector
 
 %Solve initial value problem for ODE
 disp("-----------------------")
 disp("Solving Differential Eq") 
 disp("-----------------------")
 disp(" ")
-[t,state] = ode45(@System_equations,t_range,Initial_conditions);%state1=m_tank_total, state2=U_tank_total,state3=T_tank_wall
+[t,state] = ode45(@System_equations,t_range,initial_conditions);%state1=m_tank_total, state2=U_tank_total,state3=T_tank_wall
 
 m_ox_total = state(:,1);                          %total mass in the tank according to time
 

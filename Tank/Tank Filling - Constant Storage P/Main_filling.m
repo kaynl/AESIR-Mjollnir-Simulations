@@ -31,14 +31,14 @@ m_vap_init = opts.P_storage_tank*V_tank/(opts.r_ox*T_init);%rho_vap*V_vap_init;%
 u=py.CoolProp.CoolProp.PropsSI('U','T',T_init,'Q', 1,'NitrousOxide');
 U_tot_init = m_vap_init*u;
 
-Initial_conditions=[m_liq_init; m_vap_init; U_tot_init];   %initial vector
+initial_conditions=[m_liq_init; m_vap_init; U_tot_init];   %initial vector
 
 %Solve initial value problem for ODE
 disp("-----------------------")
 disp("Solving Differential Eq") 
 disp("-----------------------")
 disp(" ")
-[t,state] = ode45(@System_of_equations_filling,t_range,Initial_conditions);
+[t,state] = ode45(@System_of_equations_filling,t_range,initial_conditions);
 
 
 m_liq = state(:,1);

@@ -102,7 +102,7 @@ RTcc_Mw = gam*(2/(gam+1))^((gam+1)/(gam-1))*c_star^2;
 T_cc = RTcc_Mw*Mw/R;
 
 %Equations that model the tank :
-dmtotaldt=-mf_ox;
+dmtotaldt=-mf_ox;   % TODO: why only oxidizer and not fuel?
 dUtotaldt=-mf_ox*h_outlet+Qdot_w_t;
 % disp("Qdot_ext_w : "+Qdot_ext_w)
 % disp("Qdot_w_t : "+Qdot_w_t)

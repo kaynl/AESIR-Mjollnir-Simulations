@@ -15,7 +15,7 @@ opts.drag_coefficient = 0.5;
 opts.combustion_efficiency = 0.9;
 opts.T_ext = 293;               % (K) Exterior temperature (20°C).
 
-%% Physical constants
+%% Physical constants.
 
 opts.g = 9.81;                                  % Gravitational constant (m.s-2).
 opts.R = 8.314;                                 % Universal gas constant (J⋅K−1⋅mol−1).
@@ -27,13 +27,14 @@ opts.Molecular_weight_air = 28.9647e-3;         % Molecular weight of air (kg/mo
 opts.r_air = opts.R / opts.Molecular_weight_air;
 
 
-%% Requirements
+%% Requirements.
 
 opts.design_altitude = 14000;          % Designed altitude to reach (m).
 opts.required_altitude = 12000;        % Mission requirements (m).
 
 
-%% Mass
+%% Mass.
+
 opts.parachute_mass = 10;
 opts.electronics_mass = 2.3;
 opts.bodyTube_mass = 7;
@@ -56,10 +57,11 @@ opts.L_tank = 1.83;     %0.73;%                                         % Tank l
 opts.V_tank = pi * (opts.D_int_tank)^2 / 4 * opts.L_tank;   %33.1e-3;   % Tank volume (m^3) (present in Tank_Temperature_finder_fct).
 opts.surface = pi * (opts.D_ext_tank)^2 / 4;                            % Rocket surface.
 
-%% Kastrullen
+%% Kastrullen.
+
 opts.L_kastrullen = 35e-2;  % Length of Kastrullen.
 
-%% Injector geometry
+%% Injector geometry.
               
 opts.r_inj = 1.2e-3 / 2;        % Injector radius (m).
 opts.Cd = 0.89;                 % Discharge coefficient.
@@ -70,7 +72,7 @@ opts.r_inj_plate = 30e-3;       % m
 opts.mass_inj = 0.271;          % kg
 opts.e_inj = 0.013;             % m
 
-%% Combustion chamber geometry
+%% Combustion chamber geometry.
 
 opts.D_cc_ext = 15.2e-2;                        % Combustion chamber external diameter (m).
 opts.e_cc = 4e-3;
@@ -81,7 +83,7 @@ opts.mass_pcc = 0.5;                            % Pre-combustion chamber mass.
 opts.L_cc = 505.8e-3;                           % Combustion chamber total length(m).
 opts.T_cc = 3650;                               % Combustion chamber temperature (K).
 
-%% Ox properties
+%% Ox properties.
 
 opts.Molecular_weight_ox = 44.013e-3;           % Molecular weight N2O (kg/mol).
 % opts.r_ox = opts.R/opts.Molecular_weight_ox;
@@ -91,7 +93,7 @@ opts.calorific_capacity_nox = 2269.5;           % J/kg
 opts.thermal_conductivity_nox = 103e-3;         % W/m.K
 
 
-%% Fuel properties
+%% Fuel properties.
 
 opts.L_fuel = 33e-2;            % Fuel length (m).
 opts.fuel_mass_init = 3.1;      % Initial fuel mass (kg).
@@ -111,21 +113,21 @@ dc = @(theta) sqrt((0.94 * R + R * Sin_amp * sin(8 * theta)).^2 + (R * Sin_amp *
 opts.CombustionChamberInitialPerimeter = integral(dc,0,2*pi);                                               % Perimeter taking into account sinus shape.
 
 
-%% Air properties sea level at 0°
+%% Air properties sea level at 0°.
 
 opts.rho_air_SL = 1.292;                    % Air density (kg/m^3).
 opts.visc_dyn_air_SL = 1.729e-5;            % Air dynamic viscosity (kg/m.s).
 opts.cp_air_SL = 1006;                      % Specific heat of air (J/kg.K).
 opts.air_thermal_conductivity = 0.02364;    % Thermal conductivity air (W/m.K).
 
-%% Combustion properties
+%% Combustion properties.
 
 opts.gamma_combustion_products = 1.18;                  % Adiabatic index coefficient.
 opts.Molecular_weigth_combustion_products = 29e-3;      % Molecular weigth of products (kg/mol).
 opts.T_cc = 3700;                                       % Combustion temperature (K).
 
 
-%% Nozzle properties
+%% Nozzle properties.
 
 opts.D_throat = 38.4e-3;
 % opts.A_throat_init = pi*(opts.D_throat)^2/4;  % Nozzle throat area (m^2).
@@ -137,7 +139,7 @@ opts.beta_nozzle = 80;                          % Nozzle inlet angle (in °).
 opts.alpha_nozzle = 10;                         % Nozzle exit angle (in °).
 opts.L_nozzle = 154.55e-3;                      % Nozzle length (m).
 
-%% Tank properties
+%% Tank properties.
 
 opts.aluminium_thermal_conductivity = 236;      % Wm-1K-1 at 0 degree celcius.
 opts.rho_alu = 2700;                            % Density aluminium (kg/m^3).
@@ -146,7 +148,8 @@ opts.aluminium_emissivity_painted = 0.8;        % Emissivity of painted tank.
 opts.aluminium_emissivity = 0.3;                % Emissivity of plain aluminium.
 opts.aluminium_absorbitivity = 0.4;             % Absorptivity of plain aluminium.
 
-%% Setup the Import Options
+%% Setup the import options.
+
 import_options_N2O = delimitedTextImportOptions("NumVariables", 8);
 import_options_c_star = delimitedTextImportOptions("NumVariables", 2);
 import_options_CO2 = delimitedTextImportOptions("NumVariables", 8);     % Modified by Benjamin Verbeek 2021-05-11 20:00 CEST "Added CO2 data identically to N2O".
@@ -182,12 +185,13 @@ NO2 = readtable("./datasets/nitrous-oxide_LVsaturation.csv", import_options_N2O)
 C_star = readtable("./datasets/characteristic_velocity.csv", import_options_c_star);
 CO2 = readtable("./datasets/carbon-dioxide_LVsaturation.csv", import_options_CO2);
 
-%% Clear temporary variables
+%% Clear temporary variables.
+
 clear import_options_N2O
 clear import_options_c_star
 clear import_options_CO2
 
-%% Spline fitting
+%% Spline fitting.
 
 Temperature_set = NO2.TemperatureK;         % Get temperature range.
 NO2_Psat_set = NO2.Pressurebar;             % Get saturation pressure for the temperatures above.
@@ -251,7 +255,7 @@ CO2_Ul_set = CO2.LiquidIntEnergy;           % Get liquid internal energy for the
 CO2_Ug_set = CO2.VaporIntEnergy;            % Get gas internal energy for the temperatures above.
 
 
-%% Storage tank geometry
+%% Storage tank geometry.
 
 % TODO: Make sure that this data is only used for the tank filling
 %       simulation and remove/move it.
@@ -261,7 +265,7 @@ opts.V_storage = 50e-3;                                             % Storage ta
 opts.D_int_storage = opts.D_ext_storage - 2 * opts.e_tank;
 opts.L_storage = opts.V_storage / (pi * (opts.D_int_storage)^2 / 4);
 
-%% Filling properties
+%% Filling properties.
 
 % TODO: Make sure that this data is only used for the tank filling
 %       simulation and remove/move it.

@@ -3,22 +3,14 @@ run('setup')
 
 global opts
 
-%Combustion parameters
-
-
+%% Set combustion parameters.
 
 dt = 0.002;
 
-t0=0;                   %initial time of ignition
-t_burn = 80;             %final time
-tf=t_burn+t0;           %time when propelant is compeltely burned
-t_range=[t0 tf];       %integration interval
-
-%Initial conditions
-disp("-----------------------")
-disp("Intitialization") 
-disp("-----------------------")
-disp(" ")
+t0 = 0;                     % Initial time of ignition.
+t_burn = 80;                % Final time.
+tf = t_burn + t0;           % Time when propelant is completely burned.
+t_range = [t0 tf];          % Integration interval.
 
 
 % TODO: Figure out a way to run this script with a given choice of parametr
@@ -27,165 +19,174 @@ disp(" ")
 
 
 
-%% Influencial Parameters
+%% Initialization.
 
-[T_ext_model, ~, ~, ~] = atmoscoesa(0);
-T_init_ext = 283;    %K
-opts.dT_ext = T_ext_model-T_init_ext;
-T_init_tank = T_init_ext;    %K
-opts.P_N2_init = 60e5; %Pa
-opts.V_N2_init = 0.05*opts.V_tank; %m^3
-opts.T_N2_init = T_init_tank; %K
-
-
-
-rho_liq = py.CoolProp.CoolProp.PropsSI('D','T',T_init_tank,'Q', 0,'NitrousOxide');
-rho_vap = py.CoolProp.CoolProp.PropsSI('D','T',T_init_tank,'Q', 1,'NitrousOxide');
-u_liq = py.CoolProp.CoolProp.PropsSI('U','T',T_init_tank,'Q', 0,'NitrousOxide');
-u_vap = py.CoolProp.CoolProp.PropsSI('U','T',T_init_tank,'Q', 1,'NitrousOxide');
-
-Fr_liq = opts.filling_ratio;        %WARNING : this is a volumic ratio and MUST NOT be confused with x, vapor massic ratio
-V_tank = opts.V_tank;
-
-m_liq = Fr_liq*V_tank*rho_liq;
-m_vap = (1-Fr_liq)*V_tank*rho_vap;
-
-m_ox_init=m_liq+m_vap;                                       %initial mass of oxidyzer in the tank
-U_total_init=m_liq*u_liq+m_vap*u_vap;                           %initial energy in the tank (both gaz and liquid phase)
-T_wall_init=T_init_ext;                                             %initial temperature of the tank wall (K)
-r_comb_chamber_init=opts.r_fuel_init;                            %initial radius in the combustion chamber (m)
-P_cc_init = 20*opts.P_atm_sl;                                   %initial pressure in combustion chamber (Pa)
-x_init=0;
-y_init=0;
-dxdt_init=0;
-dydt_init=0;
-r_throat_init = opts.D_throat/2;
-
-%%
-% tol = odeset('RelTol',1e-5,'AbsTol',1e-6);
-Initial_conditions=[m_ox_init; U_total_init; T_wall_init; r_comb_chamber_init; r_throat_init; P_cc_init; x_init; y_init; dxdt_init; dydt_init];%initial vector
-
-%Solve initial value problem for ODE
-disp("-----------------------")
-disp("Solving Differential Eq") 
-disp("-----------------------")
+disp("---------------------------------")
+disp("Intitialization...") 
+disp("---------------------------------")
 disp(" ")
+
+% TODO: move settings to main interface.
+[T_ext_model, ~, ~, ~] = atmoscoesa(0);
+T_init_ext = 283;                           % Initial external temperature (K).
+opts.dT_ext = T_ext_model - T_init_ext;     % Difference between the initial temperature and the model temperature (K).
+T_init_tank = T_init_ext;                   % Initial tank temperature is equal to external temperature (K).
+opts.P_N2_init = 60e5;                      % Pa    % TODO: N2 for pressurization?
+opts.V_N2_init = 0.05 * opts.V_tank;        % m^3   % TODO: N2 for pressurization?
+opts.T_N2_init = T_init_tank;               % K     % TODO: N2 for pressurization?
+
+rho_liq = py.CoolProp.CoolProp.PropsSI('D','T',T_init_tank,'Q', 0,'NitrousOxide');      % Density for liquid N2O (kg/m^3).
+rho_vap = py.CoolProp.CoolProp.PropsSI('D','T',T_init_tank,'Q', 1,'NitrousOxide');      % Density for vapor N2O (kg/m^3).
+u_liq = py.CoolProp.CoolProp.PropsSI('U','T',T_init_tank,'Q', 0,'NitrousOxide');        % Specific internal energy for liquid N2O (J/kg).
+u_vap = py.CoolProp.CoolProp.PropsSI('U','T',T_init_tank,'Q', 1,'NitrousOxide');        % Specific internal energy for vapor N2O (J/kg).
+
+fill_ratio = opts.filling_ratio;        % WARNING : this is a volumic ratio and MUST NOT be confused with x, massic vapor ratio.
+V_tank = opts.V_tank;                               % The volume of the tank (m^3).
+
+m_liq = fill_ratio * V_tank * rho_liq;              % The liquid mass is the liquid volume in the tank times the liquid density (kg).
+m_vap = (1 - fill_ratio) * V_tank * rho_vap;        % The liquid mass is the remaining volume in the tank times the vapor density (kg).
+
+m_ox_init = m_liq + m_vap;                          % The initial mass of the oxidizer in the tank is the sum of liquid and vapor mass (kg).
+U_total_init = m_liq * u_liq + m_vap * u_vap;       % The initial energy in the tank is the sum of liquid and vapor mass times energy (J).
+T_wall_init = T_init_ext;                           % The initial temperature of the tank wall is equal to the external temperature (K).
+r_cc_init = opts.r_fuel_init;                       % The initial radius of the combustion chamber is equal to the initial radius of the fuel port (m).
+% TODO: why 20?
+P_cc_init = 20 * opts.P_atm_sl;                     % The initial pressure in the combustion chamber is twenty times the atmospheric pressure (Pa).
+% TODO: what is D_throat, and why is the initial radius of the nozzle throat half of this quantity?
+r_throat_init = opts.D_throat / 2;                  % The initial radius of the nozzle throat is...
+
+x_init = 0;
+y_init = 0;
+dxdt_init = 0;
+dydt_init = 0;
+
+%% Solve differential equations.
+
+disp("---------------------------------")
+disp("Solving differential equations...") 
+disp("---------------------------------")
+disp(" ")
+
+% Initialization.
+% tol = odeset('RelTol',1e-5,'AbsTol',1e-6);
+initial_conditions = [m_ox_init; U_total_init; T_wall_init; r_cc_init; r_throat_init; P_cc_init; x_init; y_init; dxdt_init; dydt_init];
+
+% Solve initial value problem for ODE.
 opts.tank_state = 100;
-[t,state] = RungeKutta4(@System_equations,t_range,dt,Initial_conditions);%state1=m_tank_total, state2=U_tank_total,state3=T_tank_wall
+[t, state] = RungeKutta4(@System_equations, t_range, dt, initial_conditions);
 
-
-%%
-
-m_ox_total = state(1,:);                          %total mass in the tank according to time
-
+% Retrieve results.
+m_ox_total = state(1, :);                                                           % The total mass in the tank at each time step.
 empty_tank = find(m_ox_total < 0);
-empty_tank_mask = ones(1,length(t));
-empty_tank_mask(empty_tank)=0;
+empty_tank_mask = ones(1, length(t));
+empty_tank_mask(empty_tank) = 0;
+m_ox_total = m_ox_total .* empty_tank_mask;                                         % Set negative mass to zero.
 
-m_ox_total = m_ox_total.*empty_tank_mask;                                  %total mass in the tank according to time
-U_tank_total = state(2,:).*empty_tank_mask;                                %total energy inside the tank according to time
-T_tank_wall = state(3,:);                                                  %wall temperature of the tank according to time
-r_cc = state(4,:);                                                         %Combustion chamber radius according to time
-r_throat = state(5,:);
-P_cc = state(6,:).*empty_tank_mask+opts.P_atm_sl.*(1-empty_tank_mask);     %Pressure chamber
-x = state(7,:);
-y = state(8,:);
-vx = state(9,:);
-vy = state(10,:);
+U_tank_total = state(2, :) .* empty_tank_mask;                                      % The total energy inside the tank at each time step.
+T_tank_wall = state(3, :);                                                          % The wall temperature in the tank at each time step.
+r_cc = state(4, :);                                                                 % The radius of the combustion chamber at each time step.
+r_throat = state(5, :);
+P_cc = state(6, :) .* empty_tank_mask + opts.P_atm_sl .* (1 - empty_tank_mask);     % The pressure in the combustion chamber at each time step.
+x = state(7, :);                                                                    % The position on the x-axis (m).
+y = state(8, :);                                                                    % The position on the y-axis (m).
+vx = state(9, :);                                                                   % The velocity along the x-axis (m/s).
+vy = state(10, :);                                                                  % The velocity along the y-axis (m/s).
 
-%Post recuperation of Data
+%% Post-compute recuperation of data.
+
+disp("---------------------------------")
+disp("Post-compute calculations...") 
+disp("---------------------------------")
+disp(" ")
+
+% Post recuperation of data.
 N = length(vx);
-T_tank = zeros(1,N);
-V_tank = zeros(1,N);
-V_liq = zeros(1,N);
-P_tank = zeros(1,N);
-x_vap = zeros(1,N);
-mf_ox = zeros(1,N);
-mf_fuel = zeros(1,N);
-OF = zeros(1,N);
-mf_throat = zeros(1,N);
-T_cc = zeros(1,N);
-Tr = zeros(1,N);
-ax = zeros(1,N);
-ay = zeros(1,N);
-Me = zeros(1,N);
-Ve = zeros(1,N);
-Pe = zeros(1,N);
-At = pi*r_throat.^2;
-cp_air = zeros(1,N);
-P_N2 = zeros(1,N);
-P_N2O = zeros(1,N);
-m_fuel = zeros(1,N);
-h_liq = zeros(1,N);
-h_gas = zeros(1,N);
-h_air_ext = zeros(1,N);
-m_tot = zeros(1,N);
+T_tank = zeros(1, N);               % The temperature inside the tank (K).
+V_tank = zeros(1, N);               % The volume of the tank (m^3).
+V_liq = zeros(1, N);                % The volume of the liquid in the tank (m^3).
+P_tank = zeros(1, N);               % The pressure inside the tank (Pa).
+x_vap = zeros(1, N);                % The massic vapor ratio in the tank.
+mf_ox = zeros(1, N);                % The oxidizer mass flow (kg/s).
+mf_fuel = zeros(1, N);              % The fuel mass flow (kg/s).
+OF = zeros(1, N);                   % The oxidizer-fuel ratio.
+mf_throat = zeros(1, N);            % The mass flow through the throat.
+T_cc = zeros(1, N);                 % The temperature inside the combustion chamber (K).
+Tr = zeros(1, N);                   % The thrust (N).
+ax = zeros(1, N);                   % The acceleration along the x-axis (m/s^2).
+ay = zeros(1, N);                   % The acceleration along the y-axis (m/s^2).
+Me = zeros(1, N);                   % The exhaust Mach.
+Ve = zeros(1, N);                   % The exhaust velocity (m/s).
+Pe = zeros(1, N);                   % The exhaust pressure (Pa).
+At = pi * r_throat.^2;              % The throat area (m^2).
+cp_air = zeros(1, N);               % The specific heat of air (J/kg/K).
+P_N2 = zeros(1, N); % TODO: N2 for pressurization?
+P_N2O = zeros(1, N);                % The saturation pressure of N20 (Pa).
+m_fuel = zeros(1, N);               % The fuel mass (kg).
+h_liq = zeros(1, N);                % The heat transfer coefficient for the liquid N2O (W/m^2/K).
+h_gas = zeros(1, N);                % The heat transfer coefficient for the gaseous N2O (W/m^2/K).
+h_air_ext = zeros(1, N);            % The heat transfer coefficient for air (W/m^2/K).
+m_tot = zeros(1, N);                % The total mass (kg).
+
+% TODO: I will figure out the rest of the code later.
 
 [T_ext, speed_of_sound, P_ext, rho_ext] = atmoscoesa(y);
 
-A_fuel = pi*r_cc.^2;
+A_fuel = pi * r_cc.^2;
 
 gam = opts.gamma_combustion_products;
-Mw=opts.Molecular_weigth_combustion_products;
-R=opts.R;
+Mw = opts.Molecular_weigth_combustion_products;
+R = opts.R;
 
-
-pause(10)
-
-%%
-disp("-----------------------")
-disp("Post-Compute Calculation") 
-disp("-----------------------")
-disp(" ")
+% pause(10) % Why would we?
 
 opts.tank_state = 100;
-for i=1:length(T_tank)
-    [dstatedt, m_tot(i), h_liq(i), h_gas(i), h_air_ext(i)] = System_equations(t(i), state(:,i));
+for i = 1:length(T_tank)
+    [dstatedt, m_tot(i), h_liq(i), h_gas(i), h_air_ext(i)] = System_equations(t(i), state(:, i));
     ax(i) = dstatedt(9);
     ay(i) = dstatedt(10);
     
-    if ~ismember(i,empty_tank)
-        T_tank(i) = Tank_Temperature(U_tank_total(i),m_ox_total(i));
-        x_vap(i) = x_vapor(U_tank_total(i),m_ox_total(i),T_tank(i));
+    if ~ismember(i, empty_tank)
+        T_tank(i) = Tank_Temperature(U_tank_total(i), m_ox_total(i));
+        x_vap(i) = x_vapor(U_tank_total(i), m_ox_total(i), T_tank(i));
         
-        rho_vap = fnval(opts.RhoG_T_NO2_spline,T_tank(i));
-        rho_liq = fnval(opts.RhoL_T_NO2_spline,T_tank(i));
-        Tank_state = (1-x_vap(i))*m_ox_total(i)/(rho_liq*opts.V_tank)*100;
+        rho_vap = fnval(opts.RhoG_T_NO2_spline, T_tank(i));
+        rho_liq = fnval(opts.RhoL_T_NO2_spline, T_tank(i));
+        Tank_state = (1 - x_vap(i)) * m_ox_total(i) / (rho_liq * opts.V_tank) * 100;
         T_N2 = T_tank(i);
-        V_N2 = x_vap(i)*m_ox_total(i)/rho_vap;
-        V_tank(i) = m_ox_total(i)*(x_vap(i)/rho_vap + (1-x_vap(i))/rho_liq);
-        V_liq(i) = m_ox_total(i)*(1-x_vap(i))/rho_liq;
+        V_N2 = x_vap(i) * m_ox_total(i) / rho_vap;
+        V_tank(i) = m_ox_total(i) * (x_vap(i) / rho_vap + (1 - x_vap(i)) / rho_liq);
+        V_liq(i) = m_ox_total(i) * (1 - x_vap(i)) / rho_liq;
         
-        P_N2(i) = (opts.P_N2_init*opts.V_N2_init/opts.T_N2_init)*T_N2/V_N2;
-        P_N2O(i) = fnval(opts.Psat_NO2_spline,T_tank(i))*10^6;
-        P_tank(i) = P_N2O(i)+(opts.P_N2_init-fnval(opts.Psat_NO2_spline,opts.T_N2_init)*10^6)*Tank_state/100;
+        P_N2(i) = (opts.P_N2_init * opts.V_N2_init / opts.T_N2_init) * T_N2 / V_N2;
+        P_N2O(i) = fnval(opts.Psat_NO2_spline, T_tank(i)) * 10^6;
+        P_tank(i) = P_N2O(i) + (opts.P_N2_init - fnval(opts.Psat_NO2_spline, opts.T_N2_init) * 10^6) * Tank_state / 100;
         
-        mf_ox(i) = Mass_flow_oxidizer(T_tank(i),P_tank(i),P_cc(i));
-        G_Ox = mf_ox(i)/A_fuel(i);
-        mf_fuel(i) = Mass_flow_fuel(G_Ox,r_cc(i));
-        OF(i)=mf_ox(i)/mf_fuel(i);
-        mf_throat(i) = Mass_flow_throat(P_cc(i),OF(i),At(i)); 
-        c_star = interp1q(opts.OF_set,opts.C_star_set,OF(i));
-        T_cc(i) = gam*(2/(gam+1))^((gam+1)/(gam-1))*c_star^2*Mw/R;
-        Me(i) = ExhaustMach(opts,At(i));
-        Pe(i) = ExhaustPressure(P_cc(i),P_ext(i),Me(i),opts);
-        Ve(i) = ExhaustSpeed(T_cc(i),Pe(i),P_cc(i),opts);
-        Tr(i) = opts.combustion_efficiency*Thrust(mf_throat(i),Ve(i),P_ext(i),Pe(i),opts);
-        cp_air(i) = py.CoolProp.CoolProp.PropsSI('C','P',P_ext(i),'T', (T_ext(i)+T_tank_wall(i))/2,'Air');
-        m_fuel(i) = opts.rho_fuel*opts.L_fuel*pi*(opts.D_cc_int^2/4-r_cc(i)^2);
+        mf_ox(i) = Mass_flow_oxidizer(T_tank(i), P_tank(i), P_cc(i));
+        G_Ox = mf_ox(i)/ A_fuel(i);
+        mf_fuel(i) = Mass_flow_fuel(G_Ox, r_cc(i));
+        OF(i) = mf_ox(i)/ mf_fuel(i);
+        mf_throat(i) = Mass_flow_throat(P_cc(i), OF(i), At(i)); 
+        c_star = interp1q(opts.OF_set, opts.C_star_set, OF(i));
+        T_cc(i) = gam * (2 / (gam + 1))^((gam + 1) / (gam - 1)) * c_star^2 * Mw / R;
+        Me(i) = ExhaustMach(opts, At(i));
+        Pe(i) = ExhaustPressure(P_cc(i), P_ext(i), Me(i), opts);
+        Ve(i) = ExhaustSpeed(T_cc(i), Pe(i), P_cc(i), opts);
+        Tr(i) = opts.combustion_efficiency * Thrust(mf_throat(i), Ve(i), P_ext(i), Pe(i), opts);
+        cp_air(i) = py.CoolProp.CoolProp.PropsSI('C', 'P', P_ext(i), 'T', (T_ext(i) + T_tank_wall(i)) / 2, 'Air');
+        m_fuel(i) = opts.rho_fuel * opts.L_fuel * pi * (opts.D_cc_int^2 / 4 - r_cc(i)^2);
     else
-        index = empty_tank(1)-1;
+        index = empty_tank(1) - 1;
         T_tank(i) = T_tank(index);
-        P_tank(i)=opts.P_atm_sl;
-        T_cc(i)=T_cc(index);
+        P_tank(i) = opts.P_atm_sl;
+        T_cc(i) = T_cc(index);
     end
 end
 
 
 
-disp("-----------------------")
-disp("Plotting") 
-disp("-----------------------")
+disp("---------------------------------")
+disp("Plotting...") 
+disp("---------------------------------")
 disp(" ")
 
 plots;
