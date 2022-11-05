@@ -64,7 +64,7 @@ for i=1:N_opti_rel
         
         Heights(i,j) = max(y);
         
-        Psat_init = fnval(opts.Psat_NO2_spline,T_init_tank);
+        Psat_init = fnval(opts.Psat_N2O_spline,T_init_tank);
         
         clearvars -except i j tol Heights Diff_pressure opts t_range T_tank_range Ninj_range iteration N_opti_rel N_opti_abs
     
