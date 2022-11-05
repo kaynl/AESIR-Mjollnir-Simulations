@@ -74,7 +74,7 @@ ylabel("O/F")
 
 
 subplot(lignes,colonnes,7)
-plot(t_comb,P_tank(find(t<t_burn))/10^6,t_comb,fnval(opts.Psat_NO2_spline,T_tank(find(t<t_burn))),t_comb,0.8*fnval(opts.Psat_NO2_spline,T_tank(find(t<t_burn))),t_comb,P_cc(find(t<t_burn))/10^6,t_comb,Pe(find(t<t_burn))/10^6)
+plot(t_comb,P_tank(find(t<t_burn))/10^6,t_comb,fnval(opts.Psat_N2O_spline,T_tank(find(t<t_burn))),t_comb,0.8*fnval(opts.Psat_N2O_spline,T_tank(find(t<t_burn))),t_comb,P_cc(find(t<t_burn))/10^6,t_comb,Pe(find(t<t_burn))/10^6)
 title("Pressure Over Time")
 xlabel("Time (s)")
 ylabel("Pressure (MPa)")
@@ -85,7 +85,7 @@ lgd.Location = 'southwest';
 
 subplot(lignes,colonnes,8)
 plot(t_comb,V_liq(find(t<t_burn))*1000,t_comb,opts.V_tank*1000+0*m_ox_total(find(t<t_burn)),0,0)
-title("NO2 Volume Over Time")
+title("N2O Volume Over Time")
 xlabel("Time (s)")
 ylabel("Tank Volume (L)")
 lgd = legend("Tank Volume","Full Tank Volume");
