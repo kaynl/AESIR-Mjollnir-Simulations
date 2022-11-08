@@ -12,7 +12,7 @@ t_comb=t(find(t<t_burn));
 
 %% Radius Port Over time
 subplot(lignes,colonnes,1);
-plot(t_comb,r_cc(find(t<t_burn))*1000,t_comb,0*r_cc(find(t<t_burn))+opts.D_cc_int/2*1000,t_comb,0*r_cc(find(t<t_burn))+opts.fuel_margin_radius*1000)
+plot(t_comb, r_cc(find(t<t_burn))*1000, t_comb, 0*r_cc(find(t<t_burn))+opts.D_cc_int/2*1000, t_comb, 0*r_cc(find(t<t_burn))+opts.fuel_margin_radius*1000)
 title("Port Radius Over Time")
 xlabel("Time (s)")
 ylabel("Port Radius (mm)")
@@ -44,8 +44,8 @@ ylabel("Friction Temperature (K)")
 subplot(lignes,colonnes,4)
 a = opts.reg_a;
 n = opts.reg_n;
-A_fuel = pi*r_cc'.^2;
-G_Ox = mf_ox./A_fuel;
+A_port = pi*r_cc'.^2;
+G_Ox = mf_ox./A_port;
 
 drdt=a*(G_Ox).^n;
 plot(t_comb,drdt(find(t<t_burn))*1000)
