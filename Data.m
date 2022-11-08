@@ -17,8 +17,8 @@ opts.T_ext = 293;               % (K) Exterior temperature (20°C).
 
 %% Physical constants.
 
-opts.g = 9.81;                                  % Gravitational constant (m.s-2).
-opts.R = 8.314;                                 % Universal gas constant (J⋅K−1⋅mol−1).
+opts.g = 9.81;                                  % Gravitational constant (m/s^2).
+opts.R = 8.314;                                 % Universal gas constant (J/K/mol).
 
 opts.P_atm_sl = 101325;                         % Atmospheric pressure (N/m2).
 opts.stephan_cst = 5.67e-8;                     % Stephan-Boltzman constant (W/m2/K4).
@@ -50,10 +50,12 @@ opts.rho_ox = 785;              % Oxidizer density (kg/m^3).
 
 %% Tank geometry
 
-opts.D_ext_tank = 16e-2;    %10e-2;                                     % Tank external diameter (m).
+% TODO: Turn on/off big tank.
+
+opts.D_ext_tank = 10e-2;    % Big: 16-2, small: 10e-2.                                     % Tank external diameter (m).
 opts.e_tank = 3.5e-3;                                                   % Tank thickness.
 opts.D_int_tank = opts.D_ext_tank - 2 * opts.e_tank;    %9.42e-2;       % Tank internal diameter (m).
-opts.L_tank = 1.83;     %0.73;%                                         % Tank length (m).
+opts.L_tank = 0.73;     % Big: 1.83, small: 0.73.                                      % Tank length (m).
 opts.V_tank = pi * (opts.D_int_tank)^2 / 4 * opts.L_tank;   %33.1e-3;   % Tank volume (m^3) (present in Tank_Temperature_finder_fct).
 opts.surface = pi * (opts.D_ext_tank)^2 / 4;                            % Rocket surface.
 
@@ -64,9 +66,9 @@ opts.L_kastrullen = 35e-2;  % Length of Kastrullen.
 %% Injector geometry.
               
 opts.r_inj = 1.2e-3 / 2;        % Injector radius (m).
-opts.Cd = 0.89;                 % Discharge coefficient.
+opts.Cd = 0.66;                 % Discharge coefficient.
 opts.L_inj = 15e-3;             % Injector plate thickness (m).
-opts.n_inj = 34;                % Number of injectors.
+opts.n_inj = 80;                % Number of injectors.
 
 opts.r_inj_plate = 30e-3;       % m
 opts.mass_inj = 0.271;          % kg
@@ -122,8 +124,8 @@ opts.air_thermal_conductivity = 0.02364;    % Thermal conductivity air (W/m.K).
 
 %% Combustion properties.
 
-opts.gamma_combustion_products = 1.18;                  % Adiabatic index coefficient.
-opts.Molecular_weigth_combustion_products = 29e-3;      % Molecular weigth of products (kg/mol).
+opts.gamma_combustion_products = 1.18;                  % Heat capacity ratio.
+opts.molecular_weight_combustion_products = 29e-3;      % Molecular weight of products (kg/mol).
 opts.T_cc = 3700;                                       % Combustion temperature (K).
 
 

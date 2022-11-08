@@ -30,9 +30,6 @@ for i=1:N_opti_rel
         
         T_init_ext = 283.15;    %K
         T_init_tank = 287.15;          %K
-        opts.P_N2_init = abs_tol_range(j);      %Pa
-        opts.V_N2_init = 0.05*opts.V_tank;      %m^3
-        opts.T_N2_init = 287.15;       %K
         
         rho_liq = py.CoolProp.CoolProp.PropsSI('D','T',T_init_tank,'Q', 0,'NitrousOxide');
         rho_vap = py.CoolProp.CoolProp.PropsSI('D','T',T_init_tank,'Q', 1,'NitrousOxide');

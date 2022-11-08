@@ -40,10 +40,6 @@ for i=1:N_opti_temp
         T_init_ext = T_tank_range(i);    %K
         opts.dT_ext = T_ext_model-T_init_ext;
         T_init_tank = T_init_ext;    %K
-        
-        opts.P_N2_init = P_super_range(j);      %Pa
-        opts.V_N2_init = 0.05*opts.V_tank;      %m^3
-        opts.T_N2_init = T_tank_range(i);       %K
 %         opts.n_inj = Ninj_range(j); 
         
         rho_liq = py.CoolProp.CoolProp.PropsSI('D','T',T_init_tank,'Q', 0,'NitrousOxide');

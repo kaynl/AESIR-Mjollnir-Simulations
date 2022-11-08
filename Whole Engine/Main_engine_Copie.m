@@ -1,3 +1,5 @@
+% TODO: seems to be a copy of Main_engine.m, so I think it can be removed.
+
 tic
 run('./../setup')
 
@@ -27,9 +29,6 @@ disp(" ")
 T_init_ext = 287;    %K
 opts.dT_ext = T_ext_model-T_init_ext;
 T_init_tank = T_init_ext;    %K
-opts.P_N2_init = 50e5; %Pa
-opts.V_N2_init = 0.05*opts.V_tank; %m^3
-opts.T_N2_init = T_init_tank; %K
 % opts.dry_mass = 42;
 
 
@@ -100,7 +99,6 @@ Ve = zeros(1,N);
 Pe = zeros(1,N);
 At = pi*r_throat.^2;
 cp_air = zeros(1,N);
-P_N2 = zeros(1,N);
 P_N2O = zeros(1,N);
 m_fuel = zeros(1,N);
 h_liq = zeros(1,N);
@@ -110,10 +108,10 @@ m_tot = zeros(1,N);
 
 [T_ext, speed_of_sound, P_ext, rho_ext] = atmoscoesa(y);
 
-A_fuel = pi*r_cc.^2;
+A_port = pi*r_cc.^2;
 
 gam = opts.gamma_combustion_products;
-Mw=opts.Molecular_weigth_combustion_products;
+Mw=opts.molecular_weight_combustion_products;
 R=opts.R;
 
 toc
@@ -142,12 +140,11 @@ for i=1:length(T_tank)
         T_N2 = T_tank(i);
         V_N2 = x_vap(i)*m_ox_total(i)/rho_vap;
         
-        P_N2(i) = (opts.P_N2_init*opts.V_N2_init/opts.T_N2_init)*T_N2/V_N2;
         P_N2O(i) = fnval(opts.Psat_NO2_spline,T_tank(i))*10^6;
-        P_tank(i) = P_N2O(i)+(opts.P_N2_init-fnval(opts.Psat_NO2_spline,opts.T_N2_init)*10^6)*Tank_state/100;
+        P_tank(i) = P_N2O(i);
         
         mf_ox(i) = Mass_flow_oxidizer(T_tank(i),P_tank(i),P_cc(i));
-        G_Ox = mf_ox(i)/A_fuel(i);
+        G_Ox = mf_ox(i)/A_port(i);
         mf_fuel(i) = Mass_flow_fuel(G_Ox,r_cc(i));
         OF(i)=mf_ox(i)/mf_fuel(i);
         mf_throat(i) = Mass_flow_throat(P_cc(i),OF(i),At(i)); 
