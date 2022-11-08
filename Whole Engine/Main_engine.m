@@ -1,5 +1,5 @@
 tic
-run('./../setup')
+run('setup')
 
 global opts
 
@@ -151,8 +151,8 @@ for i = 1:length(T_tank)
         T_tank(i) = Tank_Temperature(U_tank_total(i), m_ox_total(i));
         x_vap(i) = x_vapor(U_tank_total(i), m_ox_total(i), T_tank(i));
         
-        rho_vap = fnval(opts.RhoG_T_NO2_spline, T_tank(i));
-        rho_liq = fnval(opts.RhoL_T_NO2_spline, T_tank(i));
+        rho_vap = fnval(opts.RhoG_T_N2O_spline, T_tank(i));
+        rho_liq = fnval(opts.RhoL_T_N2O_spline, T_tank(i));
         % TODO: rename to remaining_liquid?
         Tank_state = (1 - x_vap(i)) * m_ox_total(i) / (rho_liq * opts.V_tank) * 100;
         % TODO: pressurization.
@@ -163,7 +163,7 @@ for i = 1:length(T_tank)
         V_liq(i) = m_ox_total(i) * (1 - x_vap(i)) / rho_liq;                            % Compute the remaining liquid volume in the tank.
         
         % TODO: why is this 10^6 here, and 10^5 in other places?
-        P_N2O(i) = fnval(opts.Psat_NO2_spline, T_tank(i)) * 10^6;                                                               % Compute the 
+        P_N2O(i) = fnval(opts.Psat_N2O_spline, T_tank(i)) * 10^6;                                                               % Compute the 
         P_tank(i) = P_N2O(i);
         
         mf_ox(i) = Mass_flow_oxidizer(T_tank(i), P_tank(i), P_cc(i));

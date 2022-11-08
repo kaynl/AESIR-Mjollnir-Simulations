@@ -56,7 +56,7 @@ V_vap = (x * m_ox / rho_vap);
 
 % disp("V_N2 : "+V_N2*1000+" L")
 
-P_N2O = fnval(opts.Psat_NO2_spline, T_tank) * 10^6;
+P_N2O = fnval(opts.Psat_N2O_spline, T_tank) * 10^6;
 % disp("P_N2O : "+P_N2O/10^5+" bars")
 
 
