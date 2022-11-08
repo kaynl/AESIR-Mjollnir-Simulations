@@ -46,8 +46,8 @@ T_tank = Tank_Temperature(U_total, m_ox);
 
 x = x_vapor(U_total, m_ox, T_tank); %x_vapor computed thanks to the internal tank temperature
 % disp("x : "+x)
-rho_liq = fnval(opts.RhoL_T_NO2_spline, T_tank);
-rho_vap = fnval(opts.RhoG_T_NO2_spline, T_tank);
+rho_liq = fnval(opts.RhoL_T_N2O_spline,T_tank);
+rho_vap = fnval(opts.RhoG_T_N2O_spline,T_tank);
 
 Tank_state = (1 - x) * m_ox / (rho_liq * opts.V_tank) * 100;
 

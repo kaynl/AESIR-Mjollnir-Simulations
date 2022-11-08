@@ -76,7 +76,7 @@ for i=1:N_opti_temp
         m_ox_total = state(1,:);
         
         
-        Psat_init = fnval(opts.Psat_NO2_spline,T_init_tank);
+        Psat_init = fnval(opts.Psat_N2O_spline,T_init_tank);
         Diff_pressure(i,j,1) = Psat_init - max(P_cc)/10^6;
         Diff_pressure(i,j,2) = 0.8*Psat_init - max(P_cc)/10^6;
         Final_fuel_radius(i,j) = r_cc(end);

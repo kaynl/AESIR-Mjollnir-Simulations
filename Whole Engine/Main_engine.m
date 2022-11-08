@@ -1,5 +1,5 @@
 tic
-run('setup')
+run('./../setup')
 
 global opts
 

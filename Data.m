@@ -183,7 +183,7 @@ import_options_CO2.ExtraColumnsRule = "ignore";
 import_options_CO2.EmptyLineRule = "read";
 
 % Import the data.
-NO2 = readtable("./datasets/nitrous-oxide_LVsaturation.csv", import_options_N2O);
+N2O = readtable("./datasets/nitrous-oxide_LVsaturation.csv", import_options_N2O);
 C_star = readtable("./datasets/characteristic_velocity.csv", import_options_c_star);
 CO2 = readtable("./datasets/carbon-dioxide_LVsaturation.csv", import_options_CO2);
 
@@ -195,19 +195,19 @@ clear import_options_CO2
 
 %% Spline fitting.
 
-Temperature_set = NO2.TemperatureK;         % Get temperature range.
-NO2_Psat_set = NO2.Pressurebar;             % Get saturation pressure for the temperatures above.
-NO2_Rhol_set = NO2.Liquiddensitykgm;        % Get liquid density for the temperatures above.
-NO2_Rhog_set = NO2.Gasdensitykgm;           % Get gas density for the temperatures above.
-NO2_Ul_set = NO2.LiquidIntEnergy;           % Get liquid internal energy for the temperatures above.
-NO2_Ug_set = NO2.VaporIntEnergy;            % Get gas internal energy for the temperatures above.
+Temperature_set = N2O.TemperatureK;         % Get temperature range.
+N2O_Psat_set = N2O.Pressurebar;             % Get saturation pressure for the temperatures above.
+N2O_Rhol_set = N2O.Liquiddensitykgm;        % Get liquid density for the temperatures above.
+N2O_Rhog_set = N2O.Gasdensitykgm;           % Get gas density for the temperatures above.
+N2O_Ul_set = N2O.LiquidIntEnergy;           % Get liquid internal energy for the temperatures above.
+N2O_Ug_set = N2O.VaporIntEnergy;            % Get gas internal energy for the temperatures above.
 
 % Put all variables in a map under the shorthand names.
 names = {'T', 'Psat', 'Rhol', 'Rhog', 'Ul', 'Ug'};
-vars = [Temperature_set, NO2_Psat_set, NO2_Rhol_set, NO2_Rhog_set, NO2_Ul_set, NO2_Ug_set];
-NO2_vars = containers.Map;
+vars = [Temperature_set, N2O_Psat_set, N2O_Rhol_set, N2O_Rhog_set, N2O_Ul_set, N2O_Ug_set];
+N2O_vars = containers.Map;
 for i = 1:length(names)
-    NO2_vars(string(names(i))) = vars(:, i);
+    N2O_vars(string(names(i))) = vars(:, i);
 end
 
 % Specify the x and y variables that are required, and a name for each pair.
@@ -217,9 +217,9 @@ names = {'Psat', 'RhoL_T', 'RhoG_T', 'UL_T', 'UG_T', 'RhoG_P', 'UL_P', 'UG_P'};
 
 % Fit a spline to each (x, y) pair.
 for i = 1:length(names)
-    x = NO2_vars(string(xs(i)));
-    y = NO2_vars(string(ys(i)));
-    name = string(names(i)) + '_NO2_spline';
+    x = N2O_vars(string(xs(i)));
+    y = N2O_vars(string(ys(i)));
+    name = string(names(i)) + '_N2O_spline';
     spln = csaps(x, y);                         % Fit a cubic smoothing spline to the data.
     opts.(name) = fnxtr(spln, 2);               % Extrapolate with a quadratic polynomial to avoid wonkiness at the boundaries.
 end
@@ -230,9 +230,9 @@ if debug_plot
     rows = ceil(sqrt(length(names)));
     tiledlayout(rows, rows)
     for i = 1:length(names)
-        x = NO2_vars(string(xs(i)));
-        y = NO2_vars(string(ys(i)));
-        name = string(names(i)) + '_NO2_spline';
+        x = N2O_vars(string(xs(i)));
+        y = N2O_vars(string(ys(i)));
+        name = string(names(i)) + '_N2O_spline';
         nexttile
         hold on
         xlim([0.99 * min(x) 1.01 * max(x)])
@@ -243,7 +243,7 @@ if debug_plot
 end
 
 % Delete temporary variables.
-clear debug_plot i name names NO2_vars spln vars x xs y ys;
+clear debug_plot i name names N2O_vars spln vars x xs y ys;
 
 opts.OF_set = C_star.OF;                                % OF ratio range.
 opts.C_star_set = C_star.CStarms;                       % Characteristic velocity C_Star.
@@ -278,7 +278,7 @@ opts.d_filling_outlet = 0.9e-3;                 % m
 opts.S_inlet = pi * (opts.d_filling_inlet)^2 / 4;
 opts.S_outlet = pi * (opts.d_filling_outlet)^2 / 4;
 
-opts.P_storage_tank_init = fnval(opts.Psat_NO2_spline, opts.T_ext) * 10^5;     % NOTE: not changed /Benjamin.
+opts.P_storage_tank_init = fnval(opts.Psat_N2O_spline, opts.T_ext) * 10^5;     % NOTE: not changed /Benjamin.
 opts.cd_inlet = 0.85;
 opts.cd_outlet = 0.95;
 % opts.r_ox = py.CoolProp.CoolProp.PropsSI('P','T',opts.T_ext,'Q', 1,'NitrousOxide') / py.CoolProp.CoolProp.PropsSI('D','T',opts.T_ext,'Q', 1,'NitrousOxide') / opts.T_ext;
