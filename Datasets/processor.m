@@ -82,13 +82,14 @@ for i = 1:length(channels)
     xvals = TARGET.(SERIES.(field)(1))(start_index:stop_index);
     yvals = TARGET.(SERIES.(field)(2))(start_index:stop_index);
     
-    prunes = prune(xvals, yvals, PRUNE_TOLX, PRUNE_TOLY*max(yvals));
-    %prunes = [];
-    disp("    pruning " + length(prunes) + " values")
+    if PRUNE
+        prunes = prune(xvals, yvals, PRUNE_TOLX, PRUNE_TOLY*max(yvals));
+        disp("    pruning " + length(prunes) + " values")
     
-    xvals(prunes) = [];
-    yvals(prunes) = [];
-    
+        xvals(prunes) = [];
+        yvals(prunes) = [];
+    end
+        
     data.(field) = [xvals'; yvals']';
     disp("    done!")
 end
