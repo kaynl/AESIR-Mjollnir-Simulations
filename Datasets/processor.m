@@ -10,6 +10,7 @@
 
 % target data set
 TARGET = shortht21;
+OUTPUT_NAME = "ht21.mat";
 
 % starting time [ms]
 T0_ms = 3113254;
@@ -19,6 +20,9 @@ T = 120;
 
 % prune flag
 PRUNE = 1;
+% pruning tolerances
+PRUNE_TOLX = 5.0;
+PRUNE_TOLY = 0.2; % relative
 
 % column names
 SERIES.TIME_MS = ["ms_since_boot_x", "ms_since_boot_y"];
@@ -44,9 +48,6 @@ SERIES.THERM_10 = ["sindri_therm_10_temperature_celsius_x", "sindri_therm_10_tem
 SERIES.THERM_11 = ["sindri_therm_11_temperature_celsius_x", "sindri_therm_11_temperature_celsius_y"];
 SERIES.THERM_12 = ["sindri_therm_12_temperature_celsius_x", "sindri_therm_12_temperature_celsius_y"];
 
-% pruning tolerances
-PRUNE_TOLX = 1.0;
-PRUNE_TOLY = 0.1; % relative
 
 % #### SCRIPT ####
 
@@ -64,8 +65,14 @@ end
 % store global starting time
 T0 = TARGET.(SERIES.TIME_MS(1))(TIME_MS_T0_index);
 
-data.T0 = T0;  % record starting time
-data.T = T;
+% save every paramater to the object such that we know how the data
+% was processed later.
+data.T0 = T0;                   % record starting time
+data.T = T;                     % records duration
+data.OUTPUT_NAME = OUTPUT_NAME; % records name of out-file
+data.PRUNE_OPTS.PRUNE = PRUNE;  % records pruning flag
+data.PRUNE_OPTS.TOLX = PRUNE_TOLX;
+data.PRUNE_OPTS.TOLY = PRUNE_TOLY;
 
 channels = fieldnames(SERIES);
 for i = 1:length(channels)
@@ -83,19 +90,31 @@ for i = 1:length(channels)
     yvals = TARGET.(SERIES.(field)(2))(start_index:stop_index);
     
     if PRUNE
-        prunes = prune(xvals, yvals, PRUNE_TOLX, PRUNE_TOLY*max(yvals));
-        disp("    pruning " + length(prunes) + " values")
-    
-        xvals(prunes) = [];
-        yvals(prunes) = [];
-    end
+        pruned = 0;
+        iterations = 0;
+        new_prunes = [1];
         
-    data.(field) = [xvals'; yvals']';
+        while ~isempty(new_prunes)
+            iterations = iterations + 1;
+            new_prunes = prune(xvals, yvals, PRUNE_TOLX, PRUNE_TOLY*max(yvals), iterations < 3);
+            pruned = pruned + length(new_prunes);
+            
+            xvals(new_prunes) = [];
+            yvals(new_prunes) = [];
+        end
+        disp("    pruned " + pruned + " values (" + iterations + " iterations)")
+    end
+    
+    % adds the raw data array to the data struct
+    data.(field + "_DATA") = [xvals'; yvals']';
+    
+    % adds an associated (linear for now) interpolant
+    data.(field + "_I") = griddedInterpolant(xvals, yvals);
     disp("    done!")
 end
 
 disp("Saving to disk...")
-save("processor_out.mat", "data")
+save("Datasets/" + OUTPUT_NAME, "data")
 disp("    done!")
 
 % clear temps
@@ -132,13 +151,13 @@ end
 
 % Finds all data points such that x-series goes backwards, or where the
 % difference in either series is larger than the specified tolerances.
-function indices = prune(xvals, yvals, TOLX, TOLY)
+function indices = prune(xvals, yvals, TOLX, TOLY, prune_in_y)
     indices = [];
-    for i = 1:(length(xvals) - 1)
+    for i = 1:(length(xvals) - 2)
         if xvals(i + 1) - xvals(i) <= 0 || xvals(i + 1) - xvals(i) > TOLX
-            indices = [indices i];
-        elseif abs(yvals(i + 1) - yvals(i)) > TOLY
-            indices = [indices i];
+            indices = [indices (i + 1)];
+        elseif prune_in_y && abs(yvals(i + 1) - yvals(i)) > TOLY
+            indices = [indices (i + 1)];
         end
     end
 end
