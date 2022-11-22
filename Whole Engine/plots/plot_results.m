@@ -1,8 +1,9 @@
-%% Plots all the plottable plots
+%% Plots combustion, flight, and thrust plots.
 
-combustion_plot;
-flight_plot;
-thrust_plot;
+combustion_plot();
+flight_plot();
+thrust_plot();
+
 % sensor_plot;
 
 % figure(4)

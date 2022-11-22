@@ -1,12 +1,8 @@
 tic
-run('setup')
 
 global opts
 
 %% Set combustion parameters.
-
-dt = 0.001;
-
 t0 = 0;                     % Initial time of ignition.
 t_burn = 80;                % Final time.
 tf = t_burn + t0;           % Time when propelant is completely burned.
@@ -189,12 +185,5 @@ for i = 1:length(T_tank)
 end
 
 save('simulation_results')
-
-disp("---------------------------------")
-disp("Plotting...") 
-disp("---------------------------------")
-disp(" ")
-
-plots;
 
 toc

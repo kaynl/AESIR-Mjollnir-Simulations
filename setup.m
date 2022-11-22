@@ -2,7 +2,6 @@ clc
 clear all
 Data
 
-
 path(pathdef);
 
 addpath('./Datasets');

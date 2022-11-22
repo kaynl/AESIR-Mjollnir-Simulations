@@ -82,4 +82,3 @@ plot(y/1000, 0.5*rho_ext.*v.^2./10^5)
 title("Dynamic Pressure Over Altitude")
 xlabel("Altitude (km)")
 ylabel("Dynamic Pressure (bar)")
-

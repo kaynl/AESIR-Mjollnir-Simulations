@@ -55,7 +55,6 @@ opts.rho_ox = 785;              % Oxidizer density (kg/m^3).
 opts.D_ext_tank = 10e-2;    % Big: 16-2, small: 10e-2.                                     % Tank external diameter (m).
 opts.e_tank = 3.5e-3;                                                   % Tank thickness.
 opts.D_int_tank = opts.D_ext_tank - 2 * opts.e_tank;    %9.42e-2;       % Tank internal diameter (m).
-opts.L_tank = 0.73;     % Big: 1.83, small: 0.73.                                      % Tank length (m).
 opts.V_tank = pi * (opts.D_int_tank)^2 / 4 * opts.L_tank;   %33.1e-3;   % Tank volume (m^3) (present in Tank_Temperature_finder_fct).
 opts.surface = pi * (opts.D_ext_tank)^2 / 4;                            % Rocket surface.
 
@@ -68,7 +67,7 @@ opts.L_kastrullen = 35e-2;  % Length of Kastrullen.
 opts.r_inj = 1.2e-3 / 2;        % Injector radius (m).
 opts.Cd = 0.66;                 % Discharge coefficient.
 opts.L_inj = 15e-3;             % Injector plate thickness (m).
-opts.n_inj = 80;                % Number of injectors.
+opts.n_inj = 80;                % Number of injector holes.
 
 opts.r_inj_plate = 30e-3;       % m
 opts.mass_inj = 0.271;          % kg
@@ -183,9 +182,9 @@ import_options_CO2.ExtraColumnsRule = "ignore";
 import_options_CO2.EmptyLineRule = "read";
 
 % Import the data.
-N2O = readtable("./datasets/nitrous-oxide_LVsaturation.csv", import_options_N2O);
-C_star = readtable("./datasets/characteristic_velocity.csv", import_options_c_star);
-CO2 = readtable("./datasets/carbon-dioxide_LVsaturation.csv", import_options_CO2);
+N2O = readtable("Datasets/nitrous-oxide_LVsaturation.csv", import_options_N2O);
+C_star = readtable("Datasets/characteristic_velocity.csv", import_options_c_star);
+CO2 = readtable("Datasets/carbon-dioxide_LVsaturation.csv", import_options_CO2);
 
 %% Clear temporary variables.
 

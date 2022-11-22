@@ -16,7 +16,6 @@ dxdt = u(9);
 dydt = u(10);
 
 At = pi * r_throat.^2;
-dr_thdt = 0.1e-3;   %0.1mm/s regression rate : constant approximation, TO BE CORRECTED AFTER STATIC FIRE
 V_rocket = sqrt(dxdt^2 + dydt^2);
 
 [T_ext_model, speed_of_sound, P_ext, rho_ext] = atmoscoesa(y);
@@ -136,7 +135,7 @@ else
     [d2xdt2, d2ydt2] = EqofMotion(Tr,m_ox,m_fuel,y,dxdt,dydt,speed_of_sound,rho_ext, flight_state,opts);
     
     
-    state_vector=[dmtotaldt; dUtotaldt; dTwalldt; drdt; dr_thdt; dP_ccdt;dxdt;dydt;d2xdt2;d2ydt2];
+    state_vector=[dmtotaldt; dUtotaldt; dTwalldt; drdt; opts.dr_thdt; dP_ccdt;dxdt;dydt;d2xdt2;d2ydt2];
 end
 
 % % Disp Section
