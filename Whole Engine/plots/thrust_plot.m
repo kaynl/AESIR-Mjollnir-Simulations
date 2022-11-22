@@ -17,7 +17,7 @@ plot(t_comb,Tr(find(t<t_burn))/1000, t_comb, opts.combustion_efficiency*Tr(find(
 title("Thrust Over Time")
 xlabel("Time (s)")
 ylabel("Thrust (kN)")
-lgd = legend("Ideal Thrust","Real Thrust Estimation")
+lgd = legend("Ideal Thrust","Real Thrust Estimation");
 lgd.Location = 'southwest';
 
 %% Isp Over Time

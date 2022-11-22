@@ -1,5 +1,10 @@
 %% Plots combustion, flight, and thrust plots.
 
+disp("---------------------------------")
+disp("Plotting...") 
+disp("---------------------------------")
+disp(" ")
+
 combustion_plot();
 flight_plot();
 thrust_plot();

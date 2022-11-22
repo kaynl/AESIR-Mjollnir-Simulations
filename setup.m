@@ -1,6 +1,5 @@
 clc
 clear all
-Data
 
 path(pathdef);
 
