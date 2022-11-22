@@ -60,7 +60,7 @@ function set_options(plot_data, full_duration, Cd, dr_thdt, n_inj)
     %% Tank geometry
     
     if full_duration
-        opts.D_ext_tank = 16e-2;    % Tank external diameter for short-duration burn (m).
+        opts.D_ext_tank = 16e-2;    % Tank external diameter for full-duration burn (m).
         opts.L_tank = 1.83;         % Tank length for full-duration burn (m).
     else
         opts.D_ext_tank = 10e-2;    % Tank external diameter for short-duration burn (m).
