@@ -1,5 +1,5 @@
 %% This file is the main user interface.
-setup();
+setup;
 
 %% User settings.
 simulate = true;            % True if the simulation should be run, if false it will load the most recent simulation.
@@ -8,7 +8,7 @@ process_data = true;        % TODO: it would be nice to integrate this more prop
 plot_data = true;           % True if the data should be plot together with the simulations.
 
 %% Model parameters.
-full_duration = true;       % True if the tank parameters should be set to a full-duration burn, otherwise short-duration parameters are used.
+full_duration = false;       % True if the tank parameters should be set to a full-duration burn, otherwise short-duration parameters are used.
 Cd = 0.66;                  % Discharge coefficient.
 dr_thdt = 0.1e-3;           % Constant approximation of regression rate (m/s).
 
