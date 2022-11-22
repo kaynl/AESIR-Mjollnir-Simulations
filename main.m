@@ -21,7 +21,7 @@ set_options(plot_data, full_duration, Cd, dr_thdt, n_inj)
 %% Run or load simulations.
 if simulate
     % Run simulations.
-    Main_engine;
+    simulate_engine;
 else
     % Load latest result.
     load("simulation_results.mat");
