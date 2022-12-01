@@ -6,7 +6,9 @@
 % 4. specify capture duration from starting time in seconds
 % 5. run script, the resulting data is exported
 
-% #### PARAMETERS ####
+% ########################################################################
+% #### PARAMETERS ########################################################
+% ########################################################################
 
 % target data set
 %     the data set should be a Matlab imported table from a CSV-file
@@ -71,8 +73,11 @@ SERIES.THERM_10 = ["sindri_therm_10_temperature_celsius_x", "sindri_therm_10_tem
 SERIES.THERM_11 = ["sindri_therm_11_temperature_celsius_x", "sindri_therm_11_temperature_celsius_y"];
 SERIES.THERM_12 = ["sindri_therm_12_temperature_celsius_x", "sindri_therm_12_temperature_celsius_y"];
 
+% ########################################################################
+% #### SCRIPT ############################################################
+% ########################################################################
 
-% #### SCRIPT ####
+% #### EDDA DATA PROCESSING ##############################################
 
 % find starting time global
 disp("Searching for starting time...")
@@ -103,6 +108,7 @@ data.FMV_T0 = FMV_T0;
 data.FMV_T_IGNITION = FMV_T_IGNITION;
 data.FMV_T = FMV_T;
 
+% process each channel
 channels = fieldnames(SERIES);
 for i = 1:length(channels)
     field = channels{i};
@@ -143,6 +149,8 @@ for i = 1:length(channels)
     disp("    done!")
 end
 
+% #### FMV DATA PROCESSING ###############################################
+
 if FMV_IMPORT_DATA
     disp("Processing THRUST DATA")
     
@@ -156,6 +164,18 @@ if FMV_IMPORT_DATA
     data.("THRUST_I") = griddedInterpolant(xvals, yvals);
     disp("    done!")
 end
+
+% #### POST PROCESSING ###################################################
+
+% TODO: Add filtering here
+
+% TODO: Call massflow code
+
+% TODO: ...
+
+% ########################################################################
+% #### FINALIZE ##########################################################
+% ########################################################################
 
 disp("Saving to disk...")
 save("Datasets/" + OUTPUT_NAME, "data")
@@ -176,6 +196,10 @@ clear T T0 T0_ms T_IGNITION
 clear FMV_IMPORT_DATA FMV_T FMV_T0 FMV_T_IGNITION
 
 disp("DONE!")
+
+% ########################################################################
+% #### FUNCTIONS #########################################################
+% ########################################################################
 
 % Finds the smallest index such that times(i) <= time
 % and times(i + 1) >= times(i) and times(i + 2) >= times(i).
