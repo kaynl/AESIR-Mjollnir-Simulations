@@ -4,6 +4,7 @@ function ht_sensors_compilation(ht_data, test_name, t0, t1)
     rows = 3;
     columns = 1;
     pressure_range = [0 50];
+    force_range = [0 6];
     figure();
     sgtitle(test_name)
     
@@ -14,6 +15,7 @@ function ht_sensors_compilation(ht_data, test_name, t0, t1)
     plot(sample_points, ht_data.PTRAN_2_I(sample_points));
     plot(sample_points, ht_data.PTRAN_3_I(sample_points));
     lgd = legend("1: Top Pressure", "2: Bottom Pressure", "3: Injector Pressure");
+    xlim([t0 t1])
     ylim(pressure_range);
     grid on
     title("Feed Pressure")
@@ -27,6 +29,7 @@ function ht_sensors_compilation(ht_data, test_name, t0, t1)
     hold on
     plot(sample_points, ht_data.PTRAN_1_I(sample_points), '--');
     lgd = legend("4: Combustion Pressure", "1: Top Pressure (REF)");
+    xlim([t0 t1])
     ylim(pressure_range);
     grid on
     title("Combustion Pressure")
@@ -37,6 +40,8 @@ function ht_sensors_compilation(ht_data, test_name, t0, t1)
     % thrust
     subplot(rows, columns, 3);
     plot(sample_points, ht_data.THRUST_I(sample_points));
+    xlim([t0 t1])
+    ylim(force_range);
     grid on
     title("Thrust")
     xlabel("Time [s]")
