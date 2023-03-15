@@ -118,8 +118,6 @@ h_gas = zeros(1, N);                % The heat transfer coefficient for the gase
 h_air_ext = zeros(1, N);            % The heat transfer coefficient for air (W/m^2/K).
 m_tot = zeros(1, N);                % The total mass (kg).
 
-% TODO: I will figure out the rest of the code later.
-
 % Get the temperature (K), speed of sound (m/s), pressure (Pa), and density (kg/m^3) at each height y_i.
 [T_ext, speed_of_sound, P_ext, rho_ext] = atmoscoesa(y);
 
@@ -128,8 +126,6 @@ A_port = pi * r_cc.^2;      % The area of the combustion chamber port (m^2).
 gam = opts.gamma_combustion_products;               % The heat capacity ratio.
 Mw = opts.molecular_weight_combustion_products;     % The molecular weight of products (kg/mol).
 R = opts.R;                                         % The universal gas constant (J/K/mol).        
-
-% pause(10) % Why would we?
 
 opts.tank_state = 100;
 for i = 1:length(T_tank)

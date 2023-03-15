@@ -10,7 +10,7 @@ sgtitle("Thrust", 'FontSize', 20, 'Color', 'Green', 'FontWeight', 'bold')
 if opts.full_duration
     t_burn = 25;
 else
-    t_burn = 10;
+    t_burn = 8;
 end
 sim_ind = find(simulation.t < t_burn);
 t_sim = simulation.t(sim_ind);
