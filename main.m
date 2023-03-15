@@ -2,8 +2,9 @@
 setup;
 
 %% User settings.
-simulate = true;            % True if the simulation should be run, if false it will load the most recent simulation.
-process_data = true;        % TODO: it would be nice to integrate this more properly into the main.
+simulate = false;             % True if the simulation should be run, if false it will load the most recent simulation.
+process_data = false;        % TODO: it would be nice to integrate this more properly into the main.
+data_name = "Datasets/HT-2/ht21_large.mat";
 
 plot_data = true;           % True if the data should be plot together with the simulations.
 
@@ -22,14 +23,15 @@ set_options(plot_data, full_duration, Cd, dr_thdt, n_inj)
 if simulate
     % Run simulations.
     simulate_engine;
-else
-    % Load latest result.
-    load("simulation_results.mat");
 end
+simulation = load("simulation_results.mat");
 
 %% Data processing.
 if process_data
     disp("")          %% TODO: data processing.
+else
+    data = load(data_name); 
+    data = data.data;
 end
 
 %% Plot the simulation results.

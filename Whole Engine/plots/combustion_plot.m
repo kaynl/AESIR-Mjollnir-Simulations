@@ -1,92 +1,142 @@
-%% Plots of combustion part
+%% Combustion plots.
 
 global opts
 
-lignes=2;
-colonnes=4;
-figure(2)
-sgtitle("Combustion Parameters",'FontSize', 20, 'Color','blue','FontWeight','bold')
+rows = 2;
+columns = 4;
+figure(1)
+sgtitle("Combustion", 'FontSize', 20, 'Color', 'blue', 'FontWeight', 'bold')
 
-t_burn = 25;
-t_comb=t(find(t<t_burn));
+if opts.full_duration
+    t_burn = 25;
+else
+    t_burn = 10;
+end
+sim_ind = find(simulation.t < t_burn);
+t_sim = simulation.t(sim_ind);
+t_data = linspace(0, t_burn, 1000);
 
-%% Radius Port Over time
-subplot(lignes,colonnes,1);
-plot(t_comb, r_cc(find(t<t_burn))*1000, t_comb, 0*r_cc(find(t<t_burn))+opts.D_cc_int/2*1000, t_comb, 0*r_cc(find(t<t_burn))+opts.fuel_margin_radius*1000)
-title("Port Radius Over Time")
+%% Port radius.
+subplot(rows, columns, 1);
+plot(t_sim, simulation.r_cc(sim_ind) * 1000)
+hold on
+yline(opts.D_cc_int / 2 * 1000, '--', 'Color', '#A2142F')
+yline(opts.fuel_margin_radius * 1000, '--', 'Color', '#D95319')
+hold off
+
+title("Port radius")
 xlabel("Time (s)")
-ylabel("Port Radius (mm)")
-lgd = legend("Port Radius","External Tank Limit","Fuel Margin Limit");
-lgd.Location = 'southeast';
+ylabel("Port radius (mm)")
+legend("Port radius", "External tank limit", "Fuel margin limit", 'Location', 'southeast')
+axis padded
 
-%% Tank Temperature Over Time
-subplot(lignes,colonnes,2)
+%% Tank temperature.
+subplot(rows, columns, 2)
+v = sqrt(simulation.vx.^2 + simulation.vy.^2);
+T_wall_ext = simulation.T_ext + v.^2 ./ (2 .* simulation.cp_air);
+plot(t_sim, simulation.T_tank(sim_ind))
+hold on
+plot(t_sim, simulation.T_tank_wall(sim_ind)) 
+plot(t_sim, simulation.T_ext(sim_ind))
+if opts.plot_data
+    % Do something.
+end
+hold off
 
-v=sqrt(vx.^2+vy.^2);
-T_wall_ext = T_ext + v.^2./(2.*cp_air);
-
-plot(t_comb,T_tank(find(t<t_burn)), t_comb, T_tank_wall(find(t<t_burn)), t_comb, T_ext(find(t<t_burn)))
-title("Tank Temperatures Over Time")
+title("Tank temperature")
 xlabel("Time (s)")
-ylabel("Temperature Tank (K)")
+ylabel("Temperature (K)")
+legend("Internal", "External", "Air", 'Location', 'east')
+axis padded
 
-lgd = legend("Tank Int Temperature","Tank Ext Wall Temperature","Ext Air Temperature");
-lgd.Location = 'southwest';
+%% Frictional temperature.
+subplot(rows, columns, 3)
+plot(t_sim, T_wall_ext(sim_ind))
 
-%% Frictional Temperature Over Time
-subplot(lignes,colonnes,3)
-plot(t_comb, T_wall_ext(find(t<t_burn)))
-title("Frictional Temperature Over Time")
+title("Frictional temperature")
 xlabel("Time (s)")
-ylabel("Friction Temperature (K)")
+ylabel("Temperature (K)")
+axis padded
 
-%% Fuel Regression Rate
-subplot(lignes,colonnes,4)
+%% Fuel regression rate.
+subplot(rows, columns, 4)
 a = opts.reg_a;
 n = opts.reg_n;
-A_port = pi*r_cc'.^2;
-G_Ox = mf_ox./A_port;
+A_port = pi * simulation.r_cc'.^2;
+G_Ox = simulation.mf_ox ./ A_port;
+drdt = a * G_Ox.^n;
+plot(t_sim, drdt(sim_ind) * 1000)
 
-drdt=a*(G_Ox).^n;
-plot(t_comb,drdt(find(t<t_burn))*1000)
-title("Fuel Regression Rate Over Time")
+title("Fuel regression rate")
 xlabel("Time (s)")
-ylabel("Regression Rate (mm/s)")
+ylabel("Regression rate (mm/s)")
+axis padded
 
-%% Mass flow Ox + Fuel
-subplot(lignes,colonnes,5)
-plot(t_comb,mf_ox(find(t<t_burn)),t_comb,mf_fuel(find(t<t_burn)),t_comb,mf_throat(find(t<t_burn)))
-title("Mass Flows Over Time")
+%% Mass flow.
+subplot(rows, columns, 5)
+plot(t_sim, simulation.mf_ox(sim_ind))
+hold on
+plot(t_sim, simulation.mf_fuel(sim_ind))
+plot(t_sim, simulation.mf_throat(sim_ind))
+if opts.plot_data
+    % TODO: Might be nice to put computations in data processing
+    time = data.TANK_WEIGHT_DATA(:, 1);
+    weight = data.TANK_WEIGHT_DATA(:, 2);
+    spln = csaps(time, weight);             % Fit a cubic smoothing spline.
+    spln = fnxtr(spln, 2);                  % Extrapolate with a quadratic polynomial to avoid wonkiness at the boundaries.
+    mass_flow = fnder(spln);                % Take derivative of mass over time to get mass flow.
+    plot(t_data, -fnval(mass_flow, t_data), '--', 'Color', '#0072BD');         
+end
+hold off
+
+title("Mass flow")
 xlabel("Time (s)")
-ylabel("Mass Flow (kg/s)")
-lgd = legend("Oxidizer","Fuel","Throat");
-lgd.Location = 'east';
+ylabel("Mass flow (kg/s)")
+legend("Oxidizer", "Fuel", "Throat", 'Location', 'east')
+axis padded
 
-%% O/F Ratio
+%% O/F ratio.
+subplot(rows, columns, 6)
+plot(t_sim, simulation.OF(sim_ind))
 
-subplot(lignes,colonnes,6)
-plot(t_comb,OF(find(t<t_burn)))
-title("O/F Ratio Over Time")
+title("O/F ratio")
 xlabel("Time (s)")
 ylabel("O/F")
+axis padded
 
-%% Pressure in CC and Tank over Time
+%% Pressure.
+subplot(rows, columns, 7)
+plot(t_sim, simulation.P_tank(sim_ind) / 10^6)
+hold on
+plot(t_sim, simulation.P_cc(sim_ind) / 10^6)
+plot(t_sim, simulation.Pe(sim_ind) / 10^6)
+if opts.plot_data
+    % Plot actual top and bottom pressure (divide by 10 for bar to MPa conversion).
+    plot(t_data, data.PTRAN_1_I(t_data) / 10, '--', 'Color', '#0072BD');
+    plot(t_data, data.PTRAN_2_I(t_data) / 10, ':', 'Color', '#0072BD');
+    plot(t_data, data.PTRAN_4_I(t_data) / 10, '--', 'Color', '#D95319');
+end
+hold off
 
-
-subplot(lignes,colonnes,7)
-plot(t_comb,P_tank(find(t<t_burn))/10^6,t_comb,fnval(opts.Psat_N2O_spline,T_tank(find(t<t_burn))),t_comb,0.8*fnval(opts.Psat_N2O_spline,T_tank(find(t<t_burn))),t_comb,P_cc(find(t<t_burn))/10^6,t_comb,Pe(find(t<t_burn))/10^6)
-title("Pressure Over Time")
+title("Pressure")
 xlabel("Time (s)")
 ylabel("Pressure (MPa)")
-lgd = legend("Tank Pressure (supercharge)","Tank Saturation Pressure","0.8 Saturation Pressure","CC Pressure", "Exhaust Pressure");
-lgd.Location = 'southwest';
+if opts.plot_data
+    legend("Tank", "CC", "Exhaust", "Top (actual)", "Bottom (actual)", "CC (actual)", 'Location', 'northeast')  % Note: Tank pressure at saturation.
+else
+    legend("Tank", "CC", "Exhaust", 'Location', 'northeast')  % Note: Tank pressure at saturation.
+end
+axis padded
 
-%% Tank fillness
+%% Tank fill.
+subplot(rows, columns, 8)
+plot(t_sim, simulation.V_liq(sim_ind) * 1000)
+hold on
+yline(opts.V_tank * 1000, '--', 'Color', '#D95319')
+hold off
 
-subplot(lignes,colonnes,8)
-plot(t_comb,V_liq(find(t<t_burn))*1000,t_comb,opts.V_tank*1000+0*m_ox_total(find(t<t_burn)),0,0)
-title("N2O Volume Over Time")
+title("N2O volume in tank")
 xlabel("Time (s)")
-ylabel("Tank Volume (L)")
-lgd = legend("Tank Volume","Full Tank Volume");
-lgd.Location = 'east';
+ylabel("Volume (L)")
+legend("Volume", "Full", 'Location', 'east')
+axis padded

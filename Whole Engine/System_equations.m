@@ -15,6 +15,10 @@ y = u(8);
 dxdt = u(9);
 dydt = u(10);
 
+if y < 0
+    y = 0;  % Fix atmoscoesa warnings.
+end
+
 At = pi * r_throat.^2;
 V_rocket = sqrt(dxdt^2 + dydt^2);
 
@@ -65,7 +69,6 @@ P_tank = P_N2O;
 % disp("Pcc : "+P_cc/10^5+" bars")
  
 %Massflows oxidizer/fuel/throat
-% THIS IS WHERE THINGS GO WRONG! mf_ox = 0.
 mf_ox = Mass_flow_oxidizer(T_tank, P_tank, P_cc); %outlet mass flow
 
 % disp("mf ox : "+mf_ox)

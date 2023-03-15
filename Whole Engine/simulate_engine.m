@@ -8,13 +8,6 @@ t_burn = 80;                % Final time.
 tf = t_burn + t0;           % Time when propelant is completely burned.
 t_range = [t0 tf];          % Integration interval.
 
-
-% TODO: Figure out a way to run this script with a given choice of parametr
-%       values instead of having to change it in the file every time.
-% TODO: Remove the pressurization system.
-
-
-
 %% Initialization.
 
 disp("---------------------------------")
@@ -69,7 +62,8 @@ opts.tank_state = 100;
 % ode_opts = odeset('RelTol', 1e-5, 'AbsTol', 1e-8);
 % ode_opts = odeset('MaxStep', 0.05);
 % [t, state] = ode23tb(@System_equations, t_range, initial_conditions, ode_opts);
-[t, state] = ode23tb(@System_equations, t_range, initial_conditions);
+% [t, state] = ode23tb(@System_equations, t_range, initial_conditions);
+[t, state] = ode45(@System_equations, t_range, initial_conditions);
 
 % Retrieve results.
 m_ox_total = state(:, 1);                                                           % The total mass in the tank at each time step.
@@ -88,7 +82,7 @@ y = state(:, 8);                                                                
 vx = state(:, 9);                                                                   % The velocity along the x-axis (m/s).
 vy = state(:, 10);                                                                  % The velocity along the y-axis (m/s).
 
-save('simulation_pre_compute')
+y(y < 0) = 0;  % Fix atmoscoesa warnings.
 
 %% Post-compute recuperation of data.
 
@@ -184,6 +178,10 @@ for i = 1:length(T_tank)
     end
 end
 
+% Save interesting variables.
+% simulation.t = t;
+% simulation.r_cc = r_cc;
+% clearvars -except simulation
 save('simulation_results')
 
 toc

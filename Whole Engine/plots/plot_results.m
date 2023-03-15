@@ -5,9 +5,10 @@ disp("Plotting...")
 disp("---------------------------------")
 disp(" ")
 
+close all
 combustion_plot();
-flight_plot();
 thrust_plot();
+flight_plot();
 
 % sensor_plot;
 
