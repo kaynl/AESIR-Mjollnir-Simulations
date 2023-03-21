@@ -19,7 +19,7 @@ function set_options(quick, plot_data, save_plots, static, full_duration, model,
     opts.T_wall_init = T_tank_init;             % Assume that initial tank wall temperature is equal to the initial internal temperature (K).
     opts.T_ext = T_ext;                         % External (environment) temperature (K).
     
-    [T_ext_COESA, P_atm, ~, ~] = atmoscoesa(0);
+    [T_ext_COESA, ~, P_atm, ~] = atmoscoesa(0);
     opts.dT_ext = T_ext_COESA - opts.T_ext;     % Difference between the COESA temperature and the actual temperature (K).
     opts.P_atm = P_atm;                         % Atmospheric pressure (Pa).
     

@@ -23,14 +23,14 @@ plot_data = true;           % True if the data should be plot together with the 
 save_plots = true;          % True if the resulting plots should be saved.
 
 %% Model parameters.
-quick = false;               % True if quick simulation should be done. Less accurate, but useful for tuning.
+quick = true;               % True if quick simulation should be done. Less accurate, but useful for tuning.
 static = true;              % True if simulation should be for a static fire, otherwise it is done for flight.
 full_duration = false;       % True if the tank parameters should be set to a full-duration burn, otherwise short-duration parameters are used.
 model = 'Moody';             % Mass flow model, one of {'Moody', 'Dyer'}. Uses Moody by default.
-Cd = 0.78;                  % Discharge coefficient.
+Cd = 0.76;                  % Discharge coefficient.
 a = 20e-5;                  % Fuel regression parameter a in r_dot = a*G_o^n (see Sutton, 2017, p. 602).
 n = 0.55;                   % Fuel regression parameter n in r_dot = a*G_o^n (see Sutton, 2017, p. 602). Typical range: [0.4, 0.7].
-dr_thdt = 0.4e-2;           % Constant approximation of regression rate (m/s).
+dr_thdt = 0.25e-2;           % Constant approximation of regression rate (m/s).
 
 %% Vehicle parameters.
 n_inj = 80;                 % Number of injector holes.
@@ -38,7 +38,7 @@ n_inj = 80;                 % Number of injector holes.
 %% Environment parameters.
 % TODO: Retrieve from data?
 P_cc_init = 2500000;        % Initial pressure in the combustion chamber (Pa). Needs to be quite high for the model to work.
-T_tank_init = 284;          % Initial tank temperature (K).
+T_tank_init = 285;          % Initial tank temperature (K).
 T_ext = 282;                % External (environment) temperature (K).
 
 %% Set options.

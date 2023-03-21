@@ -111,10 +111,10 @@ hold on
 plot(t_sim, simulation.P_cc(sim_ind) / 10^6)
 plot(t_sim, simulation.P_ex(sim_ind) / 10^6)
 if opts.plot_data
-    % Plot actual top and bottom pressure (divide by 10 for bar to MPa conversion).
-    plot(t_data, data.PTRAN_1_I(t_data) / 10, '--', 'Color', '#0072BD');
-    plot(t_data, data.PTRAN_2_I(t_data) / 10, ':', 'Color', '#0072BD');
-    plot(t_data, data.PTRAN_4_I(t_data) / 10, '--', 'Color', '#D95319');
+    % Plot actual top and bottom pressure (divide by 10 for bar to MPa conversion and add atmospheric pressure).
+    plot(t_data, data.PTRAN_1_I(t_data) / 10 + opts.P_atm / 1e6, '--', 'Color', '#0072BD');
+    plot(t_data, data.PTRAN_2_I(t_data) / 10 + opts.P_atm / 1e6, ':', 'Color', '#0072BD');
+    plot(t_data, data.PTRAN_4_I(t_data) / 10 + opts.P_atm / 1e6, '--', 'Color', '#D95319');
 end
 hold off
 
